@@ -29,7 +29,8 @@ interface ActionItem { phase: string; action: string; category: string; priority
 
 export async function POST(req: NextRequest) {
   try {
-    const { synthesis } = await req.json() as {
+    const { synthesis, recordId } = await req.json() as {
+      recordId?: string
       synthesis: {
         name: string
         positioning_statement: string
@@ -47,9 +48,14 @@ export async function POST(req: NextRequest) {
     const s1 = wb.addWorksheet('Career Snapshot')
     s1.columns = [{ width: 25 }, { width: 55 }]
 
-    const titleRow = s1.addRow(['CareerCare AI – Career Snapshot', ''])
+    const titleRow = s1.addRow(['Midcourse – Career Snapshot', ''])
     titleRow.getCell(1).font = { size: 16, bold: true, color: { argb: 'FF' + NAVY } }
     s1.mergeCells('A1:B1')
+    if (recordId) {
+      const idRow = s1.addRow(['Record ID', recordId])
+      idRow.getCell(1).font = { color: { argb: 'FF' + NAVY }, bold: true }
+      idRow.getCell(2).font = { color: { argb: 'FF78716C' } }
+    }
     s1.addRow([])
 
     const posLabelRow = s1.addRow(['Positioning Statement', ''])
@@ -84,9 +90,6 @@ export async function POST(req: NextRequest) {
       ['Target Roles', (ts.roles || []).join(', ')],
       ['Target Sectors', (ts.sectors || []).join(', ')],
       ['Location', ts.location],
-      ['Salary Min', ts.salary_min],
-      ['Salary Max', ts.salary_max],
-      ['Salary Aspirational', ts.salary_aspirational],
       ['Timeline', ts.timeline],
     ].forEach(([k, v], i) => {
       const r = s1.addRow([k, v])

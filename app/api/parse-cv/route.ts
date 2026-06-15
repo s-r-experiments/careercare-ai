@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { NextRequest, NextResponse } from 'next/server'
+import { randomUUID } from 'crypto'
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,7 +24,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unsupported file type' }, { status: 400 })
     }
 
-    return NextResponse.json({ text })
+    const recordId = randomUUID().slice(0, 8).toUpperCase()
+
+    // Fire-and-forget: save CV to Google Drive via Apps Script
+    const webhookUrl = process.env.FEEDBACK_WEBHOOK_URL
+    if (webhookUrl) {
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'cv',
+          recordId,
+          fileName: file.name,
+          mimeType: file.type || 'application/octet-stream',
+          fileBase64: buffer.toString('base64'),
+        }),
+        redirect: 'manual',
+      }).catch(() => {})
+    }
+
+    return NextResponse.json({ text, recordId })
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Unknown error'
     return NextResponse.json({ error: msg }, { status: 500 })

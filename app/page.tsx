@@ -1,23 +1,139 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Check, ChevronRight } from 'lucide-react'
 import Logo from './components/Logo'
 import HeroSlideshow from './components/HeroSlideshow'
+
+export const metadata: Metadata = {
+  title: 'Midcourse | Free AI Career Reflection & Coaching Tool',
+  description: 'Not sure what your next career move is? Upload your CV and get a personalised AI career reflection — strengths, gaps, blindspots, and a 90-day action plan. Free, no account required.',
+  alternates: { canonical: 'https://www.midcourse.co.in' },
+}
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebApplication',
+      '@id': 'https://www.midcourse.co.in/#app',
+      name: 'Midcourse',
+      url: 'https://www.midcourse.co.in',
+      description: 'An AI-powered career reflection tool that helps professionals discover their strengths, identify gaps, and navigate their next career move.',
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Web',
+      browserRequirements: 'Requires JavaScript',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR', availability: 'https://schema.org/InStock' },
+      featureList: [
+        'AI-powered CV analysis',
+        'Personalised career reflection questions',
+        'Strengths and gaps analysis',
+        'Energy map and signal moments',
+        '90-day career action plan',
+        'Downloadable career snapshot (Excel)',
+      ],
+      creator: { '@type': 'Organization', name: 'Midcourse', url: 'https://www.midcourse.co.in' },
+    },
+    {
+      '@type': 'Organization',
+      '@id': 'https://www.midcourse.co.in/#org',
+      name: 'Midcourse',
+      url: 'https://www.midcourse.co.in',
+      description: 'AI-powered career reflection and coaching for professionals navigating their next move.',
+      foundingDate: '2024',
+      areaServed: ['IN', 'US', 'GB', 'SG', 'AE'],
+      knowsAbout: ['Career coaching', 'Career planning', 'Professional development', 'Career change', 'Job transition'],
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': 'https://www.midcourse.co.in/#faq',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'What is Midcourse?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Midcourse is a free AI-powered career reflection tool. You upload your CV, answer guided questions about your career story, and receive a deep personalised analysis — including your top strengths with evidence, key gaps, energy map, signal moments, and a 90-day action plan for your next career move.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How do I figure out my next career move?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Midcourse guides you through a structured career reflection across four pillars: your career story, what matters most to you, your personal patterns, and possible directions. By uploading your CV and answering a series of reflective questions, the AI generates a personalised career analysis that surfaces your strengths, tensions, and clearest paths forward.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Is Midcourse free to use?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. Midcourse is completely free to use with no account required. Upload your CV, complete the reflection, and download your personalised career snapshot — at no cost.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How is Midcourse different from a career coach?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'A traditional career coach charges ₹5,000–₹50,000 per session and takes weeks to understand your story. Midcourse reads your CV in seconds, asks the same deep questions a great coach would ask, and delivers a personalised career reflection in minutes — for free. It gives you a strong foundation before investing in human coaching.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Can Midcourse help me change careers?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. Midcourse is specifically designed for professionals considering a career change or transition. It identifies transferable strengths, surfaces the tensions holding you back, and maps out realistic next directions based on your actual career history — not generic advice.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What happens after I upload my CV?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Midcourse reads your CV and generates personalised reflection questions across four career pillars. You answer at your own pace — the more you share, the sharper your results. At the end, you receive a detailed career snapshot: positioning statement, top strengths with evidence, key gaps, energy map, signal moments, and a 90-day action plan.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How do I know what career is right for me?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Knowing the right career requires understanding your strengths, values, energy, and patterns — not just your job title. Midcourse\'s AI-guided reflection helps you uncover exactly these through a structured conversation built around your specific career history, surfacing what energises you, what drains you, and where your career arc is pointing.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does Midcourse work for professionals in India?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. Midcourse is built with Indian professionals in mind, with salary benchmarking data for India and career guidance tailored to the Indian job market across technology, finance, sales, consulting, and other sectors.',
+          },
+        },
+      ],
+    },
+  ],
+}
 
 const RECOGNITION_MOMENTS = [
   {
     quote: "I've been moving forward — but I'm not sure I've been moving in the right direction.",
     persona: 'Engineering Manager, 34',
     initial: 'A',
+    bg: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=64&h=64&q=80',
   },
   {
     quote: "I know what I'm good at. I'm just not sure it's what I want to be known for.",
     persona: 'Senior Consultant, 31',
     initial: 'K',
+    bg: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=64&h=64&q=80',
   },
   {
     quote: "There's a version of my career I haven't said out loud to anyone yet.",
     persona: 'Product Leader, 37',
     initial: 'R',
+    bg: 'https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?auto=format&fit=crop&w=64&h=64&q=80',
   },
 ]
 
@@ -57,34 +173,63 @@ const PAID_FEATURES = [
   'Ongoing check-ins as your path evolves',
 ]
 
+// Professionals who use Midcourse — visual anchoring
+const PEOPLE_STRIP = [
+  {
+    photo: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=80&h=80&q=80',
+    name: 'Ananya',
+    title: 'Engineering Manager',
+  },
+  {
+    photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=80&h=80&q=80',
+    name: 'Karan',
+    title: 'Senior Consultant',
+  },
+  {
+    photo: 'https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?auto=format&fit=crop&w=80&h=80&q=80',
+    name: 'Ritu',
+    title: 'Product Leader',
+  },
+  {
+    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&h=80&q=80',
+    name: 'Mihir',
+    title: 'Director, Strategy',
+  },
+  {
+    photo: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=80&h=80&q=80',
+    name: 'Nisha',
+    title: 'VP Sales',
+  },
+]
+
 export default function Home() {
   return (
     <div className="bg-white text-[#1C1917] overflow-x-hidden">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      {/* ── Nav ───────────────────────────────────────────────── */}
-      <nav className="sticky top-0 z-50 bg-[#1C1917]/96 backdrop-blur-md px-6 py-4 border-b border-white/5">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <Logo light />
+      {/* ── Nav — logo centered, sticky ─────────────────────── */}
+      <nav className="sticky top-0 z-50 bg-white px-6 py-4 border-b border-stone-100 shadow-sm">
+        <div className="max-w-6xl mx-auto relative flex items-center justify-center">
+          <Logo />
           <Link
             href="/tool"
-            className="bg-white hover:bg-stone-100 text-[#1C1917] text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
+            className="absolute right-0 bg-[#1C1917] hover:bg-stone-800 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
           >
-            Begin your reflection →
+            Begin →
           </Link>
         </div>
       </nav>
 
       {/* ── Hero ──────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center px-6 py-28 overflow-hidden bg-[#1C1917]">
+      <section className="relative min-h-screen flex items-center px-6 py-24 overflow-hidden bg-[#1C1917]">
         <HeroSlideshow />
-        <div className="absolute top-1/3 right-0 w-[600px] h-[600px] bg-green-950 rounded-full blur-[180px] opacity-15 pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto w-full relative">
+        <div className="max-w-6xl mx-auto w-full relative z-10">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
 
             {/* Left: Copy */}
             <div>
-              <div className="inline-flex items-center gap-2 bg-white/8 text-white/60 text-xs font-medium px-3.5 py-1.5 rounded-full mb-10 border border-white/8 tracking-wide">
+              <div className="inline-flex items-center gap-2 bg-white/8 text-white/60 text-xs font-medium px-3.5 py-1.5 rounded-full mb-8 border border-white/8 tracking-wide">
                 <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
                 Free · No account required
               </div>
@@ -92,11 +237,11 @@ export default function Home() {
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white leading-[1.06] tracking-tight mb-3">
                 Reflect on your career.
               </h1>
-              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white/40 leading-[1.06] tracking-tight mb-10">
+              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white/40 leading-[1.06] tracking-tight mb-8">
                 Navigate what&apos;s next.
               </h2>
 
-              <p className="text-lg text-white/55 leading-relaxed mb-12 max-w-lg font-light">
+              <p className="text-lg text-white/55 leading-relaxed mb-10 max-w-lg font-light">
                 A guided career reflection that helps you uncover patterns, strengths, and possible directions for the next chapter of your professional life.
               </p>
 
@@ -116,7 +261,7 @@ export default function Home() {
                 </a>
               </div>
 
-              <p className="text-white/25 text-sm mt-6 font-light">Takes about 10 minutes. Completely free.</p>
+              <p className="text-white/25 text-sm mt-5 font-light">Takes about 10 minutes. Completely free.</p>
             </div>
 
             {/* Right: Sample output — editorial card */}
@@ -124,7 +269,7 @@ export default function Home() {
               <div className="relative">
                 <div className="absolute inset-0 bg-green-950 blur-[80px] opacity-30 rounded-3xl" />
                 <div className="relative bg-white/[0.05] backdrop-blur border border-white/8 rounded-2xl p-8 shadow-2xl">
-                  <div className="flex items-center gap-1.5 mb-6">
+                  <div className="flex items-center gap-1.5 mb-5">
                     <div className="w-2 h-2 rounded-full bg-white/15" />
                     <div className="w-2 h-2 rounded-full bg-white/15" />
                     <div className="w-2 h-2 rounded-full bg-white/15" />
@@ -132,13 +277,13 @@ export default function Home() {
                   </div>
 
                   <p className="text-white/30 text-[11px] font-semibold uppercase tracking-[0.18em] mb-3">Career Narrative</p>
-                  <p className="text-white/85 text-base leading-relaxed italic mb-7 font-light">
+                  <p className="text-white/85 text-base leading-relaxed italic mb-6 font-light">
                     &ldquo;Priya is a product leader who has built and scaled fintech experiences across South Asia.
                     She&apos;s naturally drawn to moments of ambiguity — where there&apos;s no playbook yet —
                     and is ready for a role where she shapes the product arc, not just executes it.&rdquo;
                   </p>
 
-                  <div className="border-t border-white/8 pt-6 space-y-3.5">
+                  <div className="border-t border-white/8 pt-5 space-y-3">
                     {[
                       { label: 'Personal patterns identified', value: '5 with context' },
                       { label: 'Growth edges', value: '4 with actions' },
@@ -160,59 +305,99 @@ export default function Home() {
       </section>
 
       {/* ── Philosophy statement ────────────────────────────── */}
-      <section className="py-28 px-6 bg-[#FAF8F5]">
+      <section className="py-16 px-6 bg-[#FAF8F5]">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#A8A29E] text-sm font-medium uppercase tracking-[0.2em] mb-10">Why Midcourse exists</p>
-          <blockquote className="text-3xl sm:text-4xl font-light text-[#1C1917] leading-[1.4] tracking-tight mb-10">
+          <p className="text-[#A8A29E] text-sm font-medium uppercase tracking-[0.2em] mb-8">Why Midcourse exists</p>
+          <blockquote className="text-3xl sm:text-4xl font-light text-[#1C1917] leading-[1.4] tracking-tight mb-6">
             People service their cars. Review their finances. Track their fitness.
             Schedule their health checkups.
           </blockquote>
-          <blockquote className="text-3xl sm:text-4xl font-light text-[#78716C] leading-[1.4] tracking-tight mb-12">
+          <blockquote className="text-3xl sm:text-4xl font-light text-[#78716C] leading-[1.4] tracking-tight mb-8">
             But most careers run on autopilot — years passing without a moment of genuine reflection.
           </blockquote>
-          <div className="w-8 h-px bg-[#1C1917]/20 mx-auto mb-10" />
-          <p className="text-xl font-light text-[#1C1917] tracking-tight">
+          <div className="w-8 h-px bg-[#1C1917]/20 mx-auto mb-8" />
+          <p className="text-xl font-light text-[#1C1917] tracking-tight mb-10">
             Midcourse is that pause.
           </p>
+
+          {/* People strip — faces that ground this in real humans */}
+          <div className="flex items-center justify-center gap-0 mt-2">
+            {PEOPLE_STRIP.map((person, i) => (
+              <div
+                key={i}
+                className="w-10 h-10 rounded-full border-2 border-[#FAF8F5] overflow-hidden bg-stone-200 flex-shrink-0"
+                style={{ marginLeft: i === 0 ? 0 : '-8px', zIndex: PEOPLE_STRIP.length - i }}
+              >
+                <img
+                  src={person.photo}
+                  alt={person.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+            <p className="ml-4 text-sm text-[#78716C] font-light">
+              For professionals in the middle of their story
+            </p>
+          </div>
         </div>
       </section>
 
       {/* ── Recognition moments ──────────────────────────── */}
-      <section className="py-24 px-6 bg-white">
+      <section className="py-14 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="text-[#A8A29E] font-medium text-sm uppercase tracking-[0.2em] mb-3">You might recognise this</p>
+          <div className="text-center mb-10">
+            <p className="text-[#A8A29E] font-medium text-sm uppercase tracking-[0.2em]">You might recognise this</p>
           </div>
-          <div className="grid sm:grid-cols-3 gap-6">
-            {RECOGNITION_MOMENTS.map(({ quote, persona, initial }, i) => (
-              <div key={i} className="bg-[#FAF8F5] rounded-2xl p-7 border border-[#E7E5E4]">
-                <div className="w-9 h-9 rounded-full bg-[#E7E5E4] text-[#78716C] font-semibold text-sm flex items-center justify-center mb-5">
-                  {initial}
+          <div className="grid sm:grid-cols-3 gap-5">
+            {RECOGNITION_MOMENTS.map(({ quote, persona, initial, bg }, i) => (
+              <div key={i} className="bg-[#FAF8F5] rounded-2xl p-6 border border-[#E7E5E4]">
+                <div className="w-10 h-10 rounded-full bg-stone-200 mb-4 overflow-hidden flex-shrink-0">
+                  <img
+                    src={bg}
+                    alt={initial}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                <p className="text-[#1C1917] text-base leading-relaxed font-light mb-4">&ldquo;{quote}&rdquo;</p>
+                <p className="text-[#1C1917] text-base leading-relaxed font-light mb-3">&ldquo;{quote}&rdquo;</p>
                 <p className="text-[#A8A29E] text-xs font-medium tracking-wide">{persona}</p>
               </div>
             ))}
           </div>
-          <p className="text-center text-[#A8A29E] text-sm mt-10 max-w-xl mx-auto font-light leading-relaxed">
+          <p className="text-center text-[#A8A29E] text-sm mt-8 max-w-xl mx-auto font-light leading-relaxed">
             Career uncertainty is not a personal failure. It&apos;s what happens when there&apos;s no space to stop and genuinely reflect.
           </p>
         </div>
       </section>
 
+      {/* ── Visual break — people at work ─────────────────── */}
+      <div className="relative h-48 sm:h-56 overflow-hidden bg-stone-900">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1920&q=80')",
+          }}
+        />
+        <div className="absolute inset-0 bg-[#1C1917]/70" />
+        <div className="relative h-full flex items-center justify-center px-6">
+          <p className="text-white/80 text-xl sm:text-2xl font-light tracking-tight text-center max-w-2xl">
+            Most careers run on instinct. Midcourse is the first time many people stop to look at the whole picture.
+          </p>
+        </div>
+      </div>
+
       {/* ── What Midcourse is ──────────────────────────────── */}
-      <section className="py-24 px-6 bg-[#1C1917]">
+      <section className="py-14 px-6 bg-[#1C1917]">
         <div className="max-w-5xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-20 items-start">
+          <div className="grid lg:grid-cols-2 gap-16 items-start">
             <div>
-              <p className="text-[#D97706] font-medium text-sm uppercase tracking-[0.2em] mb-6">A different kind of experience</p>
-              <h2 className="text-3xl sm:text-4xl font-light text-white mb-8 leading-tight">
+              <p className="text-[#D97706] font-medium text-sm uppercase tracking-[0.2em] mb-5">A different kind of experience</p>
+              <h2 className="text-3xl sm:text-4xl font-light text-white mb-6 leading-tight">
                 Most tools treat your career<br />as a problem to solve.
               </h2>
-              <p className="text-white/55 leading-relaxed mb-6 font-light text-lg">
+              <p className="text-white/55 leading-relaxed mb-5 font-light text-lg">
                 We think of it as a story to understand.
               </p>
-              <p className="text-white/40 leading-relaxed mb-8 font-light">
+              <p className="text-white/40 leading-relaxed mb-7 font-light">
                 There&apos;s a difference between knowing which job to apply for and knowing <em className="text-white/60 not-italic">why</em> you&apos;re applying for it.
                 Midcourse helps you get to the second one — through a guided conversation built around your specific history, not a generic template.
               </p>
@@ -224,7 +409,7 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {[
                 { not: 'An AI career coach or advisor', is: 'A reflective guide built around your story' },
                 { not: 'A job board or hiring platform', is: 'A space for understanding before action' },
@@ -248,11 +433,11 @@ export default function Home() {
       </section>
 
       {/* ── The Guided Conversation ─────────────────────────── */}
-      <section id="the-reflection" className="py-28 px-6 bg-[#FAF8F5]">
+      <section id="the-reflection" className="py-16 px-6 bg-[#FAF8F5]">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-18">
+          <div className="text-center mb-12">
             <p className="text-[#A8A29E] font-medium text-sm uppercase tracking-[0.2em] mb-4">The guided conversation</p>
-            <h2 className="text-3xl sm:text-4xl font-light text-[#1C1917] mb-5 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-light text-[#1C1917] mb-4 tracking-tight">
               Questions built around<br />your actual story
             </h2>
             <p className="text-[#78716C] max-w-xl mx-auto text-base font-light leading-relaxed">
@@ -260,7 +445,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="space-y-10 mt-16">
+          <div className="space-y-8">
             {SAMPLE_CONVERSATIONS.map((item, i) => (
               <div key={i} className="flex items-start gap-5">
                 <div className="w-9 h-9 rounded-full bg-[#1C1917] flex items-center justify-center flex-shrink-0 mt-0.5 shadow-lg">
@@ -272,10 +457,10 @@ export default function Home() {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <p className="text-xs text-[#A8A29E] italic leading-relaxed border-l-2 border-[#D97706]/50 pl-3 mb-2.5 font-light">
+                  <p className="text-xs text-[#A8A29E] italic leading-relaxed border-l-2 border-[#D97706]/50 pl-3 mb-2 font-light">
                     {item.anchor}
                   </p>
-                  <div className="bg-[#1C1917] text-white rounded-2xl rounded-tl-none px-7 py-5 shadow-lg mb-2.5">
+                  <div className="bg-[#1C1917] text-white rounded-2xl rounded-tl-none px-7 py-5 shadow-lg mb-2">
                     <p className="text-sm leading-relaxed text-white/85 font-light">{item.question}</p>
                   </div>
                   <p className="text-xs text-[#A8A29E] italic pl-1 font-light">💡 {item.hint}</p>
@@ -288,7 +473,7 @@ export default function Home() {
           </div>
 
           {/* Three steps */}
-          <div className="mt-24 grid sm:grid-cols-3 gap-10">
+          <div className="mt-14 grid sm:grid-cols-3 gap-8">
             {[
               {
                 step: '01',
@@ -310,8 +495,8 @@ export default function Home() {
                 {i < 2 && (
                   <div className="hidden sm:block absolute top-6 left-full w-full h-px border-t border-dashed border-[#E7E5E4] -translate-x-6" />
                 )}
-                <p className="text-[#A8A29E] text-xs font-semibold uppercase tracking-[0.2em] mb-4">{step}</p>
-                <h3 className="font-semibold text-[#1C1917] text-xl mb-3 tracking-tight">{heading}</h3>
+                <p className="text-[#A8A29E] text-xs font-semibold uppercase tracking-[0.2em] mb-3">{step}</p>
+                <h3 className="font-semibold text-[#1C1917] text-xl mb-2 tracking-tight">{heading}</h3>
                 <p className="text-[#78716C] text-sm leading-relaxed font-light">{body}</p>
               </div>
             ))}
@@ -319,20 +504,37 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Visual break — work life balance ──────────────── */}
+      <div className="grid grid-cols-3 h-40 sm:h-52 overflow-hidden">
+        {[
+          'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=640&q=70',
+          'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=640&q=70',
+          'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=640&q=70',
+        ].map((url, i) => (
+          <div key={i} className="relative overflow-hidden">
+            <div
+              className="absolute inset-0 bg-cover bg-center scale-105 hover:scale-100 transition-transform duration-700"
+              style={{ backgroundImage: `url('${url}')` }}
+            />
+            <div className="absolute inset-0 bg-[#1C1917]/30" />
+          </div>
+        ))}
+      </div>
+
       {/* ── What you walk away with ─────────────────────────── */}
-      <section className="py-24 px-6 bg-white">
+      <section className="py-14 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10">
             <p className="text-[#A8A29E] font-medium text-sm uppercase tracking-[0.2em] mb-3">What you walk away with</p>
             <h2 className="text-3xl sm:text-4xl font-light text-[#1C1917] tracking-tight">
               Not a list. A reflection.
             </h2>
-            <p className="text-[#78716C] mt-4 max-w-lg mx-auto font-light text-base">
+            <p className="text-[#78716C] mt-3 max-w-lg mx-auto font-light text-base">
               Everything below is free. No credit card. No account.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-12">
             {FREE_FEATURES.map((feat, i) => (
               <div key={i} className="bg-[#FAF8F5] rounded-xl p-5 border border-[#E7E5E4] flex items-start gap-3">
                 <div className="w-5 h-5 rounded-full bg-[#1C1917] flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -344,9 +546,9 @@ export default function Home() {
           </div>
 
           {/* Paid tier teaser */}
-          <div className="bg-[#1C1917] rounded-2xl p-8 flex flex-col sm:flex-row gap-8 items-center">
+          <div className="bg-[#1C1917] rounded-2xl p-7 flex flex-col sm:flex-row gap-8 items-center">
             <div className="flex-1">
-              <div className="inline-flex items-center gap-1.5 bg-[#D97706]/20 text-[#D97706] text-xs font-semibold px-3 py-1 rounded-full mb-4 border border-[#D97706]/20 tracking-wide">
+              <div className="inline-flex items-center gap-1.5 bg-[#D97706]/20 text-[#D97706] text-xs font-semibold px-3 py-1 rounded-full mb-3 border border-[#D97706]/20 tracking-wide">
                 Coming Soon · Full Reflection
               </div>
               <h3 className="text-white font-semibold text-xl mb-2 tracking-tight">Ready to go deeper?</h3>
@@ -373,17 +575,30 @@ export default function Home() {
       </section>
 
       {/* ── Final CTA ──────────────────────────────────────── */}
-      <section className="py-36 px-6 bg-[#FAF8F5] relative overflow-hidden">
+      <section className="py-16 px-6 bg-[#FAF8F5] relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.015]" style={{
           backgroundImage: 'radial-gradient(circle at 1px 1px, #1C1917 1px, transparent 0)',
           backgroundSize: '36px 36px'
         }} />
         <div className="max-w-3xl mx-auto text-center relative">
-          <p className="text-[#A8A29E] font-medium text-sm uppercase tracking-[0.2em] mb-8">Begin</p>
-          <h2 className="text-4xl sm:text-5xl font-light text-[#1C1917] mb-8 leading-[1.2] tracking-tight">
+          {/* Overlapping faces */}
+          <div className="flex items-center justify-center mb-6">
+            {PEOPLE_STRIP.slice(0, 4).map((person, i) => (
+              <div
+                key={i}
+                className="w-12 h-12 rounded-full border-[3px] border-[#FAF8F5] overflow-hidden bg-stone-200 flex-shrink-0"
+                style={{ marginLeft: i === 0 ? 0 : '-10px', zIndex: 10 - i }}
+              >
+                <img src={person.photo} alt={person.name} className="w-full h-full object-cover" />
+              </div>
+            ))}
+          </div>
+
+          <p className="text-[#A8A29E] font-medium text-sm uppercase tracking-[0.2em] mb-5">Begin</p>
+          <h2 className="text-4xl sm:text-5xl font-light text-[#1C1917] mb-6 leading-[1.2] tracking-tight">
             Ten minutes.<br />A lifetime of context.
           </h2>
-          <p className="text-[#78716C] text-lg mb-12 max-w-xl mx-auto font-light leading-relaxed">
+          <p className="text-[#78716C] text-lg mb-10 max-w-xl mx-auto font-light leading-relaxed">
             Take the reflection most people keep putting off.
           </p>
           <Link
@@ -393,14 +608,14 @@ export default function Home() {
             Begin your reflection
             <ArrowRight className="w-5 h-5" />
           </Link>
-          <p className="text-[#A8A29E] text-sm mt-5 font-light">No account. No credit card. Free.</p>
+          <p className="text-[#A8A29E] text-sm mt-4 font-light">No account. No credit card. Free.</p>
         </div>
       </section>
 
       {/* ── Footer ─────────────────────────────────────────── */}
-      <footer className="bg-[#1C1917] px-6 py-10">
+      <footer className="bg-[#1C1917] px-6 py-8">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Logo light />
+          <Logo light={true} />
           <p className="text-white/20 text-sm font-light">© {new Date().getFullYear()} Midcourse. A space for reflection.</p>
         </div>
       </footer>

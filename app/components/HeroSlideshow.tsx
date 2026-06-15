@@ -3,29 +3,29 @@ import { useState, useEffect } from 'react'
 
 const SLIDES = [
   {
-    // Forest path — journey, direction
-    url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1920&q=80',
+    // Team in modern office — collaboration, people
+    url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80',
     pos: 'center',
   },
   {
-    // Mountain valley — perspective, stillness
-    url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1920&q=80',
-    pos: 'center',
-  },
-  {
-    // Open road — possibility, navigation
-    url: 'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?auto=format&fit=crop&w=1920&q=80',
-    pos: 'center',
-  },
-  {
-    // Mountain reflection — introspection
-    url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80',
+    // Two colleagues reviewing work on laptop
+    url: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1920&q=80',
     pos: 'center 40%',
   },
   {
-    // Misty lake — calm, reflection
-    url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1920&q=80',
+    // Person working on laptop at a bright cafe / outdoor setup
+    url: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=1920&q=80',
+    pos: 'center 30%',
+  },
+  {
+    // Open plan modern office, people working
+    url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=80',
     pos: 'center',
+  },
+  {
+    // Person with laptop, relaxed outdoor/lifestyle — work-life balance
+    url: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1920&q=80',
+    pos: 'center 50%',
   },
 ]
 
@@ -38,7 +38,7 @@ export default function HeroSlideshow() {
   }, [])
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {SLIDES.map((slide, i) => (
         <div
           key={i}
@@ -50,9 +50,9 @@ export default function HeroSlideshow() {
           }}
         />
       ))}
-      {/* Warm charcoal gradient — heavy left for text, opens right */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#1C1917]/95 via-[#1C1917]/75 to-[#1C1917]/35" />
-      <div className="absolute inset-0 bg-[#1C1917]/20" />
+      {/* Warm charcoal gradient — heavy left for text legibility, opens right */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#1C1917]/95 via-[#1C1917]/80 to-[#1C1917]/50" />
+      <div className="absolute inset-0 bg-[#1C1917]/15" />
     </div>
   )
 }
