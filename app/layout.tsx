@@ -5,8 +5,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'CareerCare AI – Your Personal Career Intelligence Tool',
-  description: 'Upload your CV, answer personalised questions, and download a comprehensive career workbook.',
+  title: 'CareerCare – Career clarity for people who want more',
+  description: 'Feeling stuck in your career? CareerCare holds a genuine career conversation with you, then hands you a personalised plan you can actually act on.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

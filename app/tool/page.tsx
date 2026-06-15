@@ -32,19 +32,19 @@ interface Synthesis {
 }
 
 const PROCESSING_MESSAGES = [
-  'Getting to know your career story…',
-  'Spotting what makes you stand out…',
-  'Identifying the gaps worth closing…',
-  'Designing your 90-day game plan…',
-  'Mapping your market intelligence…',
-  'Putting it all together…',
+  'Reading your career story carefully…',
+  'Looking for what makes you stand out…',
+  'Understanding what might be holding you back…',
+  'Designing your 90-day roadmap…',
+  'Finding the words for who you really are…',
+  'Putting your portrait together…',
 ]
 
 const STEPS = [
-  { label: 'Upload CV', icon: Upload },
-  { label: 'Your Questions', icon: MessageSquare },
-  { label: 'Processing', icon: Cpu },
-  { label: 'Your Results', icon: Download },
+  { label: 'Your CV', icon: Upload },
+  { label: 'The Conversation', icon: MessageSquare },
+  { label: 'Working on it', icon: Cpu },
+  { label: 'Your Portrait', icon: Download },
 ]
 
 // ── Typewriter hook ────────────────────────────────────────────────────
@@ -241,7 +241,7 @@ export default function ToolPage() {
       {/* Nav */}
       <nav className="bg-white border-b border-gray-100 px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <Link href="/" className="text-[#1F4E79] font-bold text-xl tracking-tight">CareerCare AI</Link>
+          <Link href="/" className="text-[#1F4E79] font-bold text-xl tracking-tight">CareerCare</Link>
           {step === 4 && synthesis && (
             <span className="text-sm text-gray-500">
               Hi, <span className="font-semibold text-[#1F4E79]">{synthesis.name.split(' ')[0]}</span> 👋
@@ -298,9 +298,9 @@ export default function ToolPage() {
         {/* ── Step 1: Upload ── */}
         {step === 1 && (
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Let&apos;s start with your CV</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Your career conversation starts here</h1>
             <p className="text-gray-500 mb-8">
-              Upload your CV and we&apos;ll craft 7 questions tailored specifically to <em>your</em> career — no generic surveys.
+              Share your CV so we can understand your background. Then we&apos;ll ask you 7 questions built around <em>your</em> specific story — not a generic survey.
             </p>
             <div
               className={`border-2 border-dashed rounded-2xl p-14 text-center cursor-pointer transition-all duration-200 ${
@@ -452,11 +452,11 @@ function ProcessingStep({ msg }: { msg: string }) {
           <Loader2 className="w-11 h-11 text-[#1F4E79] animate-spin" />
         </div>
       </div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">Building your career portrait</h2>
+      <h2 className="text-2xl font-bold text-gray-900 mb-2">Sitting with your answers…</h2>
       <p className="text-[#1F4E79] font-medium text-base min-h-[1.5rem] transition-all duration-700">
         {msg}<span className="opacity-50">{dots}</span>
       </p>
-      <p className="text-sm text-gray-400 mt-3">Usually takes 20–30 seconds</p>
+      <p className="text-sm text-gray-400 mt-3">Give it 20–30 seconds. Good things take a moment.</p>
     </div>
   )
 }
@@ -479,8 +479,8 @@ function ResultsStep({ synthesis, loading, email, setEmail, emailSubmitted, emai
         <div className="flex items-start gap-3 mb-8">
           <CheckCircle className="w-8 h-8 text-green-500 flex-shrink-0 mt-1" />
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Hey {firstName}, your career portrait is ready.</h1>
-            <p className="text-gray-500 mt-1">Here&apos;s what we discovered about you — and where you&apos;re headed.</p>
+            <h1 className="text-3xl font-bold text-gray-900">Hey {firstName} — here&apos;s what we found.</h1>
+            <p className="text-gray-500 mt-1">Your career, seen clearly. Take your time with this.</p>
           </div>
         </div>
       </FadeIn>
