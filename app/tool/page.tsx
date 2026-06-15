@@ -5,13 +5,21 @@ import Link from 'next/link'
 import {
   Upload, MessageSquare, Cpu, Download, ArrowLeft, ArrowRight,
   CheckCircle, FileText, Loader2, Star, AlertTriangle, Target,
-  TrendingUp, Sparkles, ChevronRight,
+  TrendingUp, Sparkles, ChevronRight, Lock, Building2, Briefcase,
+  Users, BookOpen, Clock, MapPin,
 } from 'lucide-react'
 
 interface Question { text: string; hint: string }
 interface Strength { strength: string; evidence: string; interview_story: string; relevance: string }
 interface Gap { gap: string; impact: string; action: string; timeline: string }
 interface ActionItem { phase: string; action: string; category: string; priority: string; target_date: string; notes: string }
+interface NextSteps {
+  industry_outlook: string
+  company_categories: string[]
+  priority_skills: { skill: string; why: string }[]
+  market_timing: string
+  salary_context: string
+}
 interface Synthesis {
   name: string
   positioning_statement: string
@@ -20,6 +28,7 @@ interface Synthesis {
   top_strengths: Strength[]
   key_gaps: Gap[]
   action_plan: ActionItem[]
+  next_steps: NextSteps
 }
 
 const PROCESSING_MESSAGES = [
@@ -27,7 +36,7 @@ const PROCESSING_MESSAGES = [
   'Spotting what makes you stand out…',
   'Identifying the gaps worth closing…',
   'Designing your 90-day game plan…',
-  'Crafting your positioning statement…',
+  'Mapping your market intelligence…',
   'Putting it all together…',
 ]
 
@@ -84,12 +93,12 @@ export default function ToolPage() {
   const [processingMsgIdx, setProcessingMsgIdx] = useState(0)
   const [email, setEmail] = useState('')
   const [emailSubmitted, setEmailSubmitted] = useState(false)
+  const [emailLoading, setEmailLoading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
   const [error, setError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // Rotate processing messages
   useEffect(() => {
     if (step !== 3) return
     const interval = setInterval(() => {
@@ -98,7 +107,6 @@ export default function ToolPage() {
     return () => clearInterval(interval)
   }, [step])
 
-  // Focus textarea after question typewriter completes (600ms buffer)
   useEffect(() => {
     if (step !== 2) return
     const t = setTimeout(() => textareaRef.current?.focus(), 700)
@@ -210,6 +218,24 @@ export default function ToolPage() {
     }
   }
 
+  const handleWaitlist = async () => {
+    if (!email) return
+    setEmailLoading(true)
+    try {
+      await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name: synthesis?.name }),
+      })
+      setEmailSubmitted(true)
+    } catch {
+      // Show success anyway — don't block UX on email failure
+      setEmailSubmitted(true)
+    } finally {
+      setEmailLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Nav */}
@@ -276,7 +302,6 @@ export default function ToolPage() {
             <p className="text-gray-500 mb-8">
               Upload your CV and we&apos;ll craft 7 questions tailored specifically to <em>your</em> career — no generic surveys.
             </p>
-
             <div
               className={`border-2 border-dashed rounded-2xl p-14 text-center cursor-pointer transition-all duration-200 ${
                 dragOver ? 'border-[#1F4E79] bg-[#1F4E79]/5 scale-[1.01]'
@@ -287,18 +312,12 @@ export default function ToolPage() {
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
             >
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".pdf,.docx,.doc"
-                className="hidden"
-                onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])}
-              />
+              <input ref={fileInputRef} type="file" accept=".pdf,.docx,.doc" className="hidden"
+                onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])} />
               <Upload className="w-12 h-12 text-[#1F4E79]/40 mx-auto mb-4" />
               <p className="text-lg font-semibold text-gray-700 mb-1">Drop your CV here</p>
               <p className="text-sm text-gray-400">or click to browse · PDF or DOCX</p>
             </div>
-
             {file && (
               <div className="mt-4 flex items-center gap-3 bg-green-50 border border-green-200 px-4 py-3 rounded-xl">
                 <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
@@ -306,37 +325,14 @@ export default function ToolPage() {
                   <p className="text-sm font-medium text-green-800 truncate">{file.name}</p>
                   <p className="text-xs text-green-500">{(file.size / 1024).toFixed(0)} KB · Ready to analyse</p>
                 </div>
-                <button
-                  onClick={e => { e.stopPropagation(); setFile(null) }}
-                  className="text-green-400 hover:text-green-600 text-xs"
-                >
-                  Change
-                </button>
+                <button onClick={e => { e.stopPropagation(); setFile(null) }} className="text-green-400 hover:text-green-600 text-xs">Change</button>
               </div>
             )}
-
-            <button
-              onClick={handleAnalyse}
-              disabled={!file || loading}
-              className="mt-6 w-full bg-[#1F4E79] text-white font-semibold py-4 rounded-xl hover:bg-[#163a5e] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base shadow-lg shadow-[#1F4E79]/20"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Reading your CV…
-                </>
-              ) : (
-                <>
-                  Analyse My CV
-                  <ChevronRight className="w-5 h-5" />
-                </>
-              )}
+            <button onClick={handleAnalyse} disabled={!file || loading}
+              className="mt-6 w-full bg-[#1F4E79] text-white font-semibold py-4 rounded-xl hover:bg-[#163a5e] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base shadow-lg shadow-[#1F4E79]/20">
+              {loading ? <><Loader2 className="w-5 h-5 animate-spin" />Reading your CV…</> : <>Analyse My CV<ChevronRight className="w-5 h-5" /></>}
             </button>
-            {loading && (
-              <p className="text-center text-sm text-gray-400 mt-3 animate-pulse">
-                Extracting your career story and crafting personalised questions…
-              </p>
-            )}
+            {loading && <p className="text-center text-sm text-gray-400 mt-3 animate-pulse">Extracting your career story and crafting personalised questions…</p>}
           </div>
         )}
 
@@ -355,9 +351,7 @@ export default function ToolPage() {
         )}
 
         {/* ── Step 3: Processing ── */}
-        {step === 3 && (
-          <ProcessingStep msg={PROCESSING_MESSAGES[processingMsgIdx]} />
-        )}
+        {step === 3 && <ProcessingStep msg={PROCESSING_MESSAGES[processingMsgIdx]} />}
 
         {/* ── Step 4: Results ── */}
         {step === 4 && synthesis && (
@@ -367,8 +361,9 @@ export default function ToolPage() {
             email={email}
             setEmail={setEmail}
             emailSubmitted={emailSubmitted}
-            setEmailSubmitted={setEmailSubmitted}
+            emailLoading={emailLoading}
             onDownload={handleDownload}
+            onWaitlist={handleWaitlist}
           />
         )}
       </div>
@@ -377,17 +372,9 @@ export default function ToolPage() {
 }
 
 // ══════════════════════════════════════════════════════════════════════
-// Step 2 — Question component
-// ══════════════════════════════════════════════════════════════════════
-function QuestionStep({
-  currentQuestion, questions, answers, setAnswers, onNext, onBack, textareaRef, onKeyDown,
-}: {
-  currentQuestion: number
-  questions: Question[]
-  answers: string[]
-  setAnswers: (a: string[]) => void
-  onNext: () => void
-  onBack: () => void
+function QuestionStep({ currentQuestion, questions, answers, setAnswers, onNext, onBack, textareaRef, onKeyDown }: {
+  currentQuestion: number; questions: Question[]; answers: string[]
+  setAnswers: (a: string[]) => void; onNext: () => void; onBack: () => void
   textareaRef: React.RefObject<HTMLTextAreaElement>
   onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
 }) {
@@ -400,23 +387,15 @@ function QuestionStep({
 
   return (
     <div>
-      {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <h1 className="text-xl font-bold text-gray-900">
           Question {currentQuestion + 1} <span className="text-gray-400 font-normal">of {questions.length}</span>
         </h1>
         <span className="text-sm font-medium text-[#1F4E79]">{progress}%</span>
       </div>
-
-      {/* Progress bar */}
       <div className="h-1.5 bg-gray-200 rounded-full mb-8 overflow-hidden">
-        <div
-          className="h-full bg-[#1F4E79] rounded-full transition-all duration-500"
-          style={{ width: `${progress}%` }}
-        />
+        <div className="h-full bg-[#1F4E79] rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
       </div>
-
-      {/* Coach avatar + question bubble */}
       <div className="flex items-start gap-3 mb-2">
         <div className="w-10 h-10 rounded-full bg-[#1F4E79] flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#1F4E79]/30 mt-0.5">
           <Sparkles className="w-5 h-5 text-white" />
@@ -424,28 +403,18 @@ function QuestionStep({
         <div className="bg-[#1F4E79] text-white rounded-2xl rounded-tl-none px-6 py-5 shadow-lg shadow-[#1F4E79]/15 flex-1 min-h-[80px]">
           <p className="text-base leading-relaxed">
             {displayed}
-            {!done && (
-              <span className="inline-block w-0.5 h-4 bg-white/60 animate-pulse ml-0.5 align-middle rounded-full" />
-            )}
+            {!done && <span className="inline-block w-0.5 h-4 bg-white/60 animate-pulse ml-0.5 align-middle rounded-full" />}
           </p>
         </div>
       </div>
-
-      {/* Hint — fades in after typewriter completes */}
       <div className={`ml-[52px] mb-5 transition-all duration-500 ${done && qHint ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1 pointer-events-none'}`}>
         <p className="text-xs text-gray-400 italic">💡 {qHint}</p>
       </div>
-
-      {/* Answer textarea — fades in after typewriter */}
       <div className={`transition-all duration-400 ${done ? 'opacity-100' : 'opacity-0'}`}>
         <textarea
           ref={textareaRef}
           value={answers[currentQuestion]}
-          onChange={e => {
-            const next = [...answers]
-            next[currentQuestion] = e.target.value
-            setAnswers(next)
-          }}
+          onChange={e => { const next = [...answers]; next[currentQuestion] = e.target.value; setAnswers(next) }}
           onKeyDown={onKeyDown}
           placeholder="Share your thoughts here… there are no right or wrong answers"
           rows={5}
@@ -453,27 +422,15 @@ function QuestionStep({
         />
         <p className="text-xs text-gray-400 mt-1.5 text-right">⌘+Enter to continue</p>
       </div>
-
-      {/* Navigation */}
       <div className="flex gap-3 mt-5">
         {currentQuestion > 0 && (
-          <button
-            onClick={onBack}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors"
-          >
+          <button onClick={onBack} className="flex items-center gap-2 px-5 py-3 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
         )}
-        <button
-          onClick={onNext}
-          disabled={!done}
-          className="flex-1 bg-[#1F4E79] text-white font-semibold py-3 rounded-xl hover:bg-[#163a5e] transition-all flex items-center justify-center gap-2 disabled:opacity-40 shadow-md shadow-[#1F4E79]/20"
-        >
-          {isLast ? (
-            <><Sparkles className="w-4 h-4" /> Generate My Career Analysis</>
-          ) : (
-            <>Next question <ArrowRight className="w-4 h-4" /></>
-          )}
+        <button onClick={onNext} disabled={!done}
+          className="flex-1 bg-[#1F4E79] text-white font-semibold py-3 rounded-xl hover:bg-[#163a5e] transition-all flex items-center justify-center gap-2 disabled:opacity-40 shadow-md shadow-[#1F4E79]/20">
+          {isLast ? <><Sparkles className="w-4 h-4" />Generate My Career Analysis</> : <>Next question <ArrowRight className="w-4 h-4" /></>}
         </button>
       </div>
     </div>
@@ -481,23 +438,18 @@ function QuestionStep({
 }
 
 // ══════════════════════════════════════════════════════════════════════
-// Step 3 — Processing animation
-// ══════════════════════════════════════════════════════════════════════
 function ProcessingStep({ msg }: { msg: string }) {
   const [dots, setDots] = useState('')
   useEffect(() => {
     const t = setInterval(() => setDots(d => d.length >= 3 ? '' : d + '.'), 400)
     return () => clearInterval(t)
   }, [])
-
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <div className="relative mb-10">
-        <div className="w-24 h-24 rounded-full bg-[#1F4E79]/10 animate-[ping_2s_ease-in-out_infinite]" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-24 h-24 rounded-full bg-[#1F4E79]/5 flex items-center justify-center">
-            <Loader2 className="w-11 h-11 text-[#1F4E79] animate-spin" />
-          </div>
+        <div className="w-24 h-24 rounded-full bg-[#1F4E79]/10 animate-ping absolute inset-0" />
+        <div className="w-24 h-24 rounded-full bg-[#1F4E79]/5 flex items-center justify-center relative">
+          <Loader2 className="w-11 h-11 text-[#1F4E79] animate-spin" />
         </div>
       </div>
       <h2 className="text-2xl font-bold text-gray-900 mb-2">Building your career portrait</h2>
@@ -510,42 +462,30 @@ function ProcessingStep({ msg }: { msg: string }) {
 }
 
 // ══════════════════════════════════════════════════════════════════════
-// Step 4 — Results
-// ══════════════════════════════════════════════════════════════════════
-function ResultsStep({
-  synthesis, loading, email, setEmail, emailSubmitted, setEmailSubmitted, onDownload,
-}: {
-  synthesis: Synthesis
-  loading: boolean
-  email: string
-  setEmail: (v: string) => void
-  emailSubmitted: boolean
-  setEmailSubmitted: (v: boolean) => void
-  onDownload: () => void
+function ResultsStep({ synthesis, loading, email, setEmail, emailSubmitted, emailLoading, onDownload, onWaitlist }: {
+  synthesis: Synthesis; loading: boolean; email: string; setEmail: (v: string) => void
+  emailSubmitted: boolean; emailLoading: boolean; onDownload: () => void; onWaitlist: () => void
 }) {
   const firstName = synthesis.name?.split(' ')[0] || 'there'
   const { displayed: posStatement, done: posDone } = useTypewriter(synthesis.positioning_statement, 11)
   const cs = synthesis.current_state || {}
   const ts = synthesis.target_state || {}
+  const ns = synthesis.next_steps || {} as NextSteps
 
   return (
     <div>
-      {/* Hero greeting */}
+      {/* Greeting */}
       <FadeIn delay={0}>
         <div className="flex items-start gap-3 mb-8">
           <CheckCircle className="w-8 h-8 text-green-500 flex-shrink-0 mt-1" />
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              Hey {firstName}, your career portrait is ready.
-            </h1>
-            <p className="text-gray-500 mt-1">
-              Here&apos;s what we discovered about you — and where you&apos;re headed.
-            </p>
+            <h1 className="text-3xl font-bold text-gray-900">Hey {firstName}, your career portrait is ready.</h1>
+            <p className="text-gray-500 mt-1">Here&apos;s what we discovered about you — and where you&apos;re headed.</p>
           </div>
         </div>
       </FadeIn>
 
-      {/* Positioning Statement — typewriter reveal */}
+      {/* Positioning statement */}
       <FadeIn delay={150}>
         <div className="bg-white border-l-4 border-[#1F4E79] rounded-xl p-6 mb-6 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
@@ -554,9 +494,7 @@ function ResultsStep({
           </div>
           <p className="text-gray-800 text-lg leading-relaxed italic">
             &ldquo;{posStatement}
-            {!posDone && (
-              <span className="inline-block w-0.5 h-5 bg-[#1F4E79]/40 animate-pulse ml-0.5 align-middle rounded-full" />
-            )}
+            {!posDone && <span className="inline-block w-0.5 h-5 bg-[#1F4E79]/40 animate-pulse ml-0.5 align-middle rounded-full" />}
             &rdquo;
           </p>
         </div>
@@ -566,27 +504,21 @@ function ResultsStep({
       <FadeIn delay={350}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-            <h3 className="font-bold text-gray-500 mb-4 text-xs uppercase tracking-widest flex items-center gap-2">
+            <h3 className="font-bold text-gray-500 mb-4 text-xs uppercase tracking-widest flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5" /> Where you are now
             </h3>
             <dl className="space-y-2.5 text-sm">
-              {([
-                ['Role', cs.role],
-                ['Company', cs.company],
-                ['Experience', cs.experience],
-                ['Domain', cs.domain],
-                ['Notice Period', cs.notice_period],
-              ] as [string, string][]).filter(([, v]) => v).map(([k, v]) => (
-                <div key={k} className="flex justify-between gap-3">
-                  <dt className="text-gray-400 flex-shrink-0">{k}</dt>
-                  <dd className="font-semibold text-gray-800 text-right">{v}</dd>
-                </div>
-              ))}
+              {([['Role', cs.role], ['Company', cs.company], ['Experience', cs.experience], ['Domain', cs.domain], ['Notice Period', cs.notice_period]] as [string, string][])
+                .filter(([, v]) => v).map(([k, v]) => (
+                  <div key={k} className="flex justify-between gap-3">
+                    <dt className="text-gray-400 flex-shrink-0">{k}</dt>
+                    <dd className="font-semibold text-gray-800 text-right">{v}</dd>
+                  </div>
+                ))}
             </dl>
           </div>
-
           <div className="bg-gradient-to-br from-[#1F4E79]/5 to-[#1F4E79]/10 rounded-xl p-5 border border-[#1F4E79]/15">
-            <h3 className="font-bold text-[#1F4E79] mb-4 text-xs uppercase tracking-widest flex items-center gap-2">
+            <h3 className="font-bold text-[#1F4E79] mb-4 text-xs uppercase tracking-widest flex items-center gap-1.5">
               <TrendingUp className="w-3.5 h-3.5" /> Where you&apos;re going
             </h3>
             <dl className="space-y-2.5 text-sm">
@@ -607,20 +539,17 @@ function ResultsStep({
         </div>
       </FadeIn>
 
-      {/* Top Strengths */}
+      {/* Strengths */}
       <FadeIn delay={550}>
         <div className="mb-6">
           <h2 className="font-bold text-gray-900 mb-1 flex items-center gap-2 text-lg">
-            <Star className="w-5 h-5 text-yellow-400" />
-            Your Top Strengths
+            <Star className="w-5 h-5 text-yellow-400" /> Your Top Strengths
           </h2>
-          <p className="text-sm text-gray-400 mb-4">Full interview stories are in your workbook — use them word-for-word in interviews.</p>
+          <p className="text-sm text-gray-400 mb-4">Full interview stories are in your workbook — use them word-for-word.</p>
           <div className="space-y-3">
             {(synthesis.top_strengths || []).slice(0, 3).map((s, i) => (
               <div key={i} className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex gap-3">
-                <div className="w-6 h-6 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
-                  {i + 1}
-                </div>
+                <div className="w-6 h-6 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</div>
                 <div>
                   <p className="font-semibold text-emerald-900 mb-1">{s.strength}</p>
                   <p className="text-sm text-emerald-700 leading-relaxed">{s.evidence}</p>
@@ -636,20 +565,17 @@ function ResultsStep({
         </div>
       </FadeIn>
 
-      {/* Key Gaps */}
-      <FadeIn delay={750}>
+      {/* Gaps */}
+      <FadeIn delay={700}>
         <div className="mb-8">
           <h2 className="font-bold text-gray-900 mb-1 flex items-center gap-2 text-lg">
-            <AlertTriangle className="w-5 h-5 text-amber-400" />
-            Gaps Worth Closing
+            <AlertTriangle className="w-5 h-5 text-amber-400" /> Gaps Worth Closing
           </h2>
           <p className="text-sm text-gray-400 mb-4">Each one has a concrete action and timeline in your 90-day plan.</p>
           <div className="space-y-3">
             {(synthesis.key_gaps || []).slice(0, 3).map((g, i) => (
               <div key={i} className="bg-amber-50 border border-amber-100 rounded-xl p-4 flex gap-3">
-                <div className="w-6 h-6 rounded-full bg-amber-400 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
-                  {i + 1}
-                </div>
+                <div className="w-6 h-6 rounded-full bg-amber-400 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</div>
                 <div>
                   <p className="font-semibold text-amber-900 mb-1">{g.gap}</p>
                   <p className="text-sm text-amber-700 leading-relaxed">{g.action}</p>
@@ -661,65 +587,211 @@ function ResultsStep({
         </div>
       </FadeIn>
 
+      {/* ── FREE: Next Step Intelligence ── */}
+      <FadeIn delay={900}>
+        <div className="mb-3">
+          <div className="flex items-center gap-2 mb-1">
+            <h2 className="font-bold text-gray-900 text-lg flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-[#1F4E79]" /> Your Next Step Intelligence
+            </h2>
+            <span className="text-xs font-semibold bg-green-100 text-green-700 px-2 py-0.5 rounded-full border border-green-200">FREE</span>
+          </div>
+          <p className="text-sm text-gray-400 mb-5">High-level market context for your job search, based on your background.</p>
+
+          {/* Industry outlook */}
+          {ns.industry_outlook && (
+            <div className="bg-white border border-gray-100 rounded-xl p-5 mb-4 shadow-sm">
+              <p className="text-xs font-bold text-[#1F4E79] uppercase tracking-widest mb-2">Industry Outlook</p>
+              <p className="text-sm text-gray-700 leading-relaxed">{ns.industry_outlook}</p>
+              {ns.market_timing && (
+                <div className="mt-3 flex items-start gap-2 bg-blue-50 rounded-lg px-3 py-2">
+                  <Clock className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-blue-700 font-medium">{ns.market_timing}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Company categories */}
+          {(ns.company_categories || []).length > 0 && (
+            <div className="bg-white border border-gray-100 rounded-xl p-5 mb-4 shadow-sm">
+              <p className="text-xs font-bold text-[#1F4E79] uppercase tracking-widest mb-3">Company Types to Target</p>
+              <div className="space-y-2">
+                {ns.company_categories.map((cat, i) => (
+                  <div key={i} className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-[#1F4E79]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Building2 className="w-3 h-3 text-[#1F4E79]" />
+                    </div>
+                    <p className="text-sm text-gray-700">{cat}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Priority skills + salary */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {(ns.priority_skills || []).length > 0 && (
+              <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+                <p className="text-xs font-bold text-[#1F4E79] uppercase tracking-widest mb-3">Skills to Prioritise</p>
+                <div className="space-y-3">
+                  {ns.priority_skills.map((s, i) => (
+                    <div key={i}>
+                      <p className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">
+                        <BookOpen className="w-3.5 h-3.5 text-[#1F4E79]" /> {s.skill}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5 ml-5">{s.why}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {ns.salary_context && (
+              <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+                <p className="text-xs font-bold text-[#1F4E79] uppercase tracking-widest mb-3">Salary Context</p>
+                <p className="text-sm text-gray-700 leading-relaxed">{ns.salary_context}</p>
+                {ts.salary_aspirational && (
+                  <div className="mt-3 bg-green-50 rounded-lg px-3 py-2">
+                    <p className="text-xs text-green-700 font-medium">Your aspirational: {ts.salary_aspirational}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </FadeIn>
+
+      {/* ── PAID: Locked Premium Intelligence ── */}
+      <FadeIn delay={1050}>
+        <div className="mb-8 mt-6">
+          <div className="flex items-center gap-2 mb-1">
+            <h2 className="font-bold text-gray-900 text-lg flex items-center gap-2">
+              <Lock className="w-5 h-5 text-gray-400" /> Premium Intelligence
+            </h2>
+            <span className="text-xs font-semibold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full border border-amber-200">PAID</span>
+          </div>
+          <p className="text-sm text-gray-400 mb-5">The specific intel that turns a job search into a targeted campaign.</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Locked card: Specific companies */}
+            <LockedCard
+              icon={<Building2 className="w-5 h-5 text-[#1F4E79]" />}
+              title="Companies Hiring Right Now"
+              preview={[
+                '● Razorpay — 3 open roles in your domain',
+                '● PhonePe — Senior PM, Payments',
+                '● CRED — Product Lead, Growth',
+                '● Slice — Head of Product',
+                '● Jupiter Money — Director of PM',
+              ]}
+            />
+            {/* Locked card: Open roles */}
+            <LockedCard
+              icon={<Briefcase className="w-5 h-5 text-[#1F4E79]" />}
+              title="Open Roles Matched to You"
+              preview={[
+                '● Senior Product Manager — FinTech',
+                '● Product Lead, Lending — Series C',
+                '● Head of Product — Neobank',
+                '● Director of PM — Payments',
+                '● Group PM — Consumer App',
+              ]}
+            />
+            {/* Locked card: Referral tracker */}
+            <LockedCard
+              icon={<Users className="w-5 h-5 text-[#1F4E79]" />}
+              title="Referral Tracker"
+              preview={[
+                '  Company | Contact | Status | Date',
+                '  ────────────────────────────────',
+                '  Razorpay | Priya S. | Pending | —',
+                '  PhonePe  | Amit K.  | Warm    | —',
+                '  CRED     | —        | Cold    | —',
+              ]}
+              mono
+            />
+            {/* Locked card: Location / market intel */}
+            <LockedCard
+              icon={<MapPin className="w-5 h-5 text-[#1F4E79]" />}
+              title="Insider Company Intel"
+              preview={[
+                '● Razorpay: hiring freeze lifted Q2',
+                '● PhonePe: expanding Lending team',
+                '● CRED: culture → ownership culture',
+                '● Salary negotiation scripts included',
+                '● LinkedIn DM templates per company',
+              ]}
+            />
+          </div>
+
+          {/* Unlock CTA */}
+          <div className="mt-5 bg-gradient-to-r from-[#1F4E79]/5 to-amber-50 border border-amber-200 rounded-xl p-5 flex flex-col sm:flex-row items-center gap-4">
+            <div className="flex-1">
+              <p className="font-bold text-gray-900 mb-1">Unlock CareerCare Premium</p>
+              <p className="text-sm text-gray-500">Specific companies, live open roles, referral tracker, salary scripts — updated weekly.</p>
+            </div>
+            <button
+              onClick={() => { document.getElementById('waitlist-form')?.scrollIntoView({ behavior: 'smooth' }) }}
+              className="bg-[#1F4E79] text-white font-semibold px-6 py-3 rounded-xl hover:bg-[#163a5e] transition-colors whitespace-nowrap flex-shrink-0"
+            >
+              Join Waitlist →
+            </button>
+          </div>
+        </div>
+      </FadeIn>
+
       {/* Download CTA */}
-      <FadeIn delay={950}>
+      <FadeIn delay={1200}>
         <div className="bg-gradient-to-br from-[#1F4E79] to-[#163a5e] rounded-2xl p-8 text-center text-white mb-6 shadow-xl shadow-[#1F4E79]/25">
           <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
             <Download className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-2xl font-bold mb-2">Your Personalised Workbook is Ready</h2>
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-white/60 text-sm mb-6">
-            <span>4 sheets</span>
-            <span>·</span>
-            <span>16-step action plan</span>
-            <span>·</span>
-            <span>5 strengths with interview stories</span>
-            <span>·</span>
-            <span>90-day roadmap</span>
+            <span>4 sheets</span><span>·</span><span>16-step action plan</span>
+            <span>·</span><span>5 strengths with interview stories</span><span>·</span><span>90-day roadmap</span>
           </div>
-          <button
-            onClick={onDownload}
-            disabled={loading}
-            className="bg-white text-[#1F4E79] font-bold px-10 py-4 rounded-xl hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-60 flex items-center gap-2 mx-auto shadow-lg text-base"
-          >
+          <button onClick={onDownload} disabled={loading}
+            className="bg-white text-[#1F4E79] font-bold px-10 py-4 rounded-xl hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-60 flex items-center gap-2 mx-auto shadow-lg text-base">
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
             Download My Career Workbook (.xlsx)
           </button>
         </div>
       </FadeIn>
 
-      {/* Email capture / waitlist */}
-      <FadeIn delay={1100}>
-        <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center shadow-sm">
+      {/* Email / waitlist capture */}
+      <FadeIn delay={1350}>
+        <div id="waitlist-form" className="bg-white rounded-2xl border border-gray-100 p-6 text-center shadow-sm">
           {emailSubmitted ? (
             <div className="flex flex-col items-center gap-2 py-2">
               <CheckCircle className="w-8 h-8 text-green-500" />
               <p className="font-semibold text-gray-900">You&apos;re on the list, {firstName}!</p>
-              <p className="text-sm text-gray-500">We&apos;ll reach out when CareerCare Premium goes live.</p>
+              <p className="text-sm text-gray-500">Check your inbox — we&apos;ve sent you a confirmation. We&apos;ll reach out when Premium goes live.</p>
             </div>
           ) : (
             <>
               <div className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 text-xs font-semibold px-3 py-1 rounded-full mb-3 border border-amber-200">
-                <Star className="w-3 h-3" />
-                Coming Soon: CareerCare Premium
+                <Star className="w-3 h-3" /> Coming Soon: CareerCare Premium
               </div>
               <h3 className="font-bold text-gray-900 mb-1">
-                LinkedIn headlines · Interview Q&amp;As · Salary negotiation scripts
+                Specific companies · Open roles · Referral tracker · Salary scripts
               </h3>
-              <p className="text-sm text-gray-500 mb-4">Join the waitlist and get early access at 50% off.</p>
+              <p className="text-sm text-gray-500 mb-4">Join the waitlist and get early access at 50% off. We&apos;ll email you the moment it&apos;s ready.</p>
               <div className="flex gap-2 max-w-md mx-auto">
                 <input
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && email && setEmailSubmitted(true)}
+                  onKeyDown={e => e.key === 'Enter' && onWaitlist()}
                   placeholder="your@email.com"
                   className="flex-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4E79]/30 focus:border-[#1F4E79]"
                 />
                 <button
-                  onClick={() => email && setEmailSubmitted(true)}
-                  className="bg-[#1F4E79] text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-[#163a5e] transition-colors whitespace-nowrap"
+                  onClick={onWaitlist}
+                  disabled={!email || emailLoading}
+                  className="bg-[#1F4E79] text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-[#163a5e] transition-colors whitespace-nowrap disabled:opacity-50 flex items-center gap-1.5"
                 >
+                  {emailLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                   Join Waitlist
                 </button>
               </div>
@@ -727,6 +799,36 @@ function ResultsStep({
           )}
         </div>
       </FadeIn>
+    </div>
+  )
+}
+
+// ── Locked premium card ────────────────────────────────────────────────
+function LockedCard({ icon, title, preview, mono = false }: {
+  icon: React.ReactNode; title: string; preview: string[]; mono?: boolean
+}) {
+  return (
+    <div className="relative bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
+      {/* Blurred content */}
+      <div className="p-5 select-none">
+        <p className="text-xs font-bold text-[#1F4E79] uppercase tracking-widest mb-3 flex items-center gap-1.5">
+          {icon} {title}
+        </p>
+        <div className="blur-sm opacity-60 pointer-events-none">
+          {preview.map((line, i) => (
+            <p key={i} className={`text-xs text-gray-600 leading-relaxed ${mono ? 'font-mono' : ''} ${i > 0 ? 'mt-1' : ''}`}>
+              {line}
+            </p>
+          ))}
+        </div>
+      </div>
+      {/* Lock overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/60 to-white/95 flex flex-col items-center justify-end pb-5">
+        <div className="bg-[#1F4E79]/10 rounded-full p-2 mb-2">
+          <Lock className="w-4 h-4 text-[#1F4E79]" />
+        </div>
+        <p className="text-xs font-bold text-[#1F4E79]">Premium only</p>
+      </div>
     </div>
   )
 }

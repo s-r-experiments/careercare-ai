@@ -28,16 +28,24 @@ export async function POST(req: NextRequest) {
   "target_state": { "roles": string[], "sectors": string[], "location": string, "salary_min": string, "salary_max": string, "salary_aspirational": string, "timeline": string },
   "top_strengths": [{ "strength": string, "evidence": string, "interview_story": string, "relevance": string }],
   "key_gaps": [{ "gap": string, "impact": string, "action": string, "timeline": string }],
-  "action_plan": [{ "phase": string, "action": string, "category": string, "priority": string, "target_date": string, "notes": string }]
+  "action_plan": [{ "phase": string, "action": string, "category": string, "priority": string, "target_date": string, "notes": string }],
+  "next_steps": {
+    "industry_outlook": string,
+    "company_categories": string[],
+    "priority_skills": [{ "skill": string, "why": string }],
+    "market_timing": string,
+    "salary_context": string
+  }
 }
-top_strengths must have exactly 5 items. key_gaps must have exactly 4 items. action_plan must have exactly 16 items (4 per phase).
-Phases must be exactly: "Days 1-15 (Foundation)" | "Days 16-30 (Network + Prep)" | "Days 31-45 (Active Search)" | "Days 46-90 (Offers)"
+top_strengths: exactly 5 items. key_gaps: exactly 4 items. action_plan: exactly 16 items (4 per phase).
+Phases: "Days 1-15 (Foundation)" | "Days 16-30 (Network + Prep)" | "Days 31-45 (Active Search)" | "Days 46-90 (Offers)"
+next_steps rules: industry_outlook = 2-3 sentences on growth trends and hiring sentiment in their specific domain; company_categories = exactly 4 specific types of companies to target (be concrete, e.g. "Series B FinTech startups building lending products in India" not just "startups"); priority_skills = exactly 3 skills with a specific one-line reason each tied to their target role; market_timing = one punchy sentence on current hiring conditions in their domain; salary_context = one sentence contextualising their salary expectations against the current market.
 Return only valid JSON with no markdown.`,
         },
         { role: 'user', content: `CV:\n${cvText}\n\nQ&A:\n${qa}` },
       ],
       response_format: { type: 'json_object' },
-      max_tokens: 4000,
+      max_tokens: 5500,
     })
 
     const content = completion.choices[0].message.content || '{}'
