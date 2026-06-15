@@ -201,7 +201,7 @@ export default function Home() {
                 CareerCare does something different: it <em className="text-white/90">interviews</em> you.
               </p>
               <p className="text-white/60 leading-relaxed mb-10">
-                Seven questions, crafted specifically from your own career history, designed to surface
+                A short set of questions crafted specifically from your own career history, designed to surface
                 the patterns, motivations, and strengths you&apos;ve never seen clearly yourself.
                 Then we turn those answers into a sharp, honest, actionable career portrait.
               </p>
@@ -262,7 +262,7 @@ export default function Home() {
               </div>
             ))}
             <div className="flex items-center gap-4 ml-[52px]">
-              <p className="text-gray-400 text-sm italic">+ 4 more, all built from your specific career history.</p>
+              <p className="text-gray-400 text-sm italic">And more — all built from your specific career history.</p>
             </div>
           </div>
 
@@ -276,7 +276,7 @@ export default function Home() {
               },
               {
                 step: '02',
-                heading: 'Answer 7 honest questions',
+                heading: 'Answer a few honest questions',
                 body: 'Take 10 minutes. Reflect genuinely. The more honest your answers, the sharper your portrait.',
               },
               {
@@ -364,7 +364,7 @@ export default function Home() {
             Ready to stop guessing<br />and start moving?
           </h2>
           <p className="text-white/50 text-lg mb-10 max-w-xl mx-auto">
-            Ten minutes. Seven honest questions. One clear plan.
+            Ten minutes. A few honest questions. One clear plan.
             That&apos;s all it takes to go from stuck to certain.
           </p>
           <Link

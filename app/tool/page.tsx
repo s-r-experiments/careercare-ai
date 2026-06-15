@@ -300,7 +300,7 @@ export default function ToolPage() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Your career conversation starts here</h1>
             <p className="text-gray-500 mb-8">
-              Share your CV so we can understand your background. Then we&apos;ll ask you 7 questions built around <em>your</em> specific story — not a generic survey.
+              Share your CV so we can understand your background. Then we&apos;ll ask you a few questions built around <em>your</em> specific story — not a generic survey.
             </p>
             <div
               className={`border-2 border-dashed rounded-2xl p-14 text-center cursor-pointer transition-all duration-200 ${
