@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight, Check, ChevronRight } from 'lucide-react'
+import Logo from './components/Logo'
+import HeroSlideshow from './components/HeroSlideshow'
 
 const PAIN_QUOTES = [
   {
@@ -53,7 +55,7 @@ export default function Home() {
       {/* ── Nav ───────────────────────────────────────────────── */}
       <nav className="sticky top-0 z-50 bg-[#0A1F35]/95 backdrop-blur-md px-6 py-4 border-b border-white/5">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <span className="text-white font-bold text-xl tracking-tight">CareerCare</span>
+          <Logo light />
           <Link
             href="/tool"
             className="bg-amber-400 hover:bg-amber-300 text-gray-900 text-sm font-bold px-5 py-2.5 rounded-lg transition-colors"
@@ -64,14 +66,11 @@ export default function Home() {
       </nav>
 
       {/* ── Hero ──────────────────────────────────────────────── */}
-      <section className="relative bg-gradient-to-br from-[#0A1F35] via-[#0F2742] to-[#1A3F6B] min-h-[92vh] flex items-center px-6 py-24 overflow-hidden">
-        {/* Background texture */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{
-          backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
-          backgroundSize: '32px 32px'
-        }} />
-        <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-[#1F4E79] rounded-full blur-[120px] opacity-30 pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-amber-500 rounded-full blur-[160px] opacity-5 pointer-events-none" />
+      <section className="relative min-h-[92vh] flex items-center px-6 py-24 overflow-hidden bg-[#0A1F35]">
+        {/* Cycling background images */}
+        <HeroSlideshow />
+        {/* Ambient glow accents — sit above the photos */}
+        <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-[#1F4E79] rounded-full blur-[140px] opacity-20 pointer-events-none" />
 
         <div className="max-w-6xl mx-auto w-full relative">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -381,7 +380,7 @@ export default function Home() {
       {/* ── Footer ─────────────────────────────────────────── */}
       <footer className="bg-[#07121E] px-6 py-10">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-white font-bold text-lg">CareerCare</span>
+          <Logo light />
           <p className="text-white/25 text-sm">© {new Date().getFullYear()} CareerCare. Built for people who want more.</p>
         </div>
       </footer>

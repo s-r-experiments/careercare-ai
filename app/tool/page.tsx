@@ -8,6 +8,7 @@ import {
   TrendingUp, Sparkles, ChevronRight, Lock, Building2, Briefcase,
   Users, BookOpen, Clock, MapPin,
 } from 'lucide-react'
+import Logo from '../components/Logo'
 
 interface Question { text: string; hint: string }
 interface Strength { strength: string; evidence: string; interview_story: string; relevance: string }
@@ -45,6 +46,46 @@ const STEPS = [
   { label: 'The Conversation', icon: MessageSquare },
   { label: 'Working on it', icon: Cpu },
   { label: 'Your Portrait', icon: Download },
+]
+
+// ── Journey stages (replace question counter) ─────────────────────────
+const JOURNEY_STAGES = [
+  {
+    label: 'Your story',
+    sub: 'Where you\'ve come from',
+    // questions in first ~30% of the set
+  },
+  {
+    label: 'What drives you',
+    sub: 'Your values and what matters',
+    // questions in 30–57%
+  },
+  {
+    label: 'Where you shine',
+    sub: 'Strengths you might not see yourself',
+    // questions in 57–86%
+  },
+  {
+    label: 'What\'s next',
+    sub: 'Looking ahead with clarity',
+    // last ~14%
+  },
+]
+
+function getStageIndex(qIdx: number, total: number): number {
+  const pct = (qIdx + 0.5) / total
+  if (pct <= 0.30) return 0
+  if (pct <= 0.57) return 1
+  if (pct <= 0.86) return 2
+  return 3
+}
+
+// Stage background tints (very subtle, changes with each phase of the conversation)
+const STAGE_BG = [
+  'bg-violet-50',
+  'bg-sky-50',
+  'bg-emerald-50',
+  'bg-amber-50',
 ]
 
 // ── Typewriter hook ────────────────────────────────────────────────────
@@ -236,12 +277,16 @@ export default function ToolPage() {
     }
   }
 
+  const stageBg = step === 2 && questions.length > 0
+    ? STAGE_BG[getStageIndex(currentQuestion, questions.length)]
+    : 'bg-gray-50'
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen transition-colors duration-700 ${stageBg}`}>
       {/* Nav */}
       <nav className="bg-white border-b border-gray-100 px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <Link href="/" className="text-[#1F4E79] font-bold text-xl tracking-tight">CareerCare</Link>
+          <Link href="/"><Logo /></Link>
           {step === 4 && synthesis && (
             <span className="text-sm text-gray-500">
               Hi, <span className="font-semibold text-[#1F4E79]">{synthesis.name.split(' ')[0]}</span> 👋
@@ -372,6 +417,63 @@ export default function ToolPage() {
 }
 
 // ══════════════════════════════════════════════════════════════════════
+// Journey progress bar — replaces the "Question X of Y" counter
+// ══════════════════════════════════════════════════════════════════════
+function JourneyProgress({ currentQuestion, totalQuestions }: { currentQuestion: number; totalQuestions: number }) {
+  const stageIdx = getStageIndex(currentQuestion, totalQuestions)
+  const stage = JOURNEY_STAGES[stageIdx]
+
+  return (
+    <div className="mb-10">
+      {/* Stage name */}
+      <div className="mb-5">
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+          <p className="text-xs font-bold text-[#1F4E79]/50 uppercase tracking-[0.18em]">{stage.sub}</p>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0A1F35]">{stage.label}</h1>
+      </div>
+
+      {/* 4-node journey path */}
+      <div className="flex items-start">
+        {JOURNEY_STAGES.map((s, i) => {
+          const isCompleted = i < stageIdx
+          const isCurrent = i === stageIdx
+          return (
+            <div key={i} className={`flex items-center ${i < JOURNEY_STAGES.length - 1 ? 'flex-1' : ''}`}>
+              <div className="flex flex-col items-center flex-shrink-0">
+                {/* Dot */}
+                <div className={`w-3 h-3 rounded-full transition-all duration-500 ${
+                  isCompleted
+                    ? 'bg-emerald-500'
+                    : isCurrent
+                    ? 'bg-[#1F4E79] ring-[5px] ring-[#1F4E79]/15'
+                    : 'bg-gray-300'
+                }`} />
+                {/* Label */}
+                <span className={`text-[10px] font-semibold mt-2 text-center leading-tight w-16 hidden sm:block transition-colors duration-300 ${
+                  isCurrent ? 'text-[#1F4E79]'
+                  : isCompleted ? 'text-emerald-500'
+                  : 'text-gray-300'
+                }`}>
+                  {s.label}
+                </span>
+              </div>
+              {/* Connector line */}
+              {i < JOURNEY_STAGES.length - 1 && (
+                <div className="flex-1 h-0.5 mx-2 mt-[5px] rounded-full overflow-hidden bg-gray-200 sm:mt-[5px]">
+                  <div className={`h-full bg-emerald-400 transition-all duration-700 ${isCompleted ? 'w-full' : 'w-0'}`} />
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ══════════════════════════════════════════════════════════════════════
 function QuestionStep({ currentQuestion, questions, answers, setAnswers, onNext, onBack, textareaRef, onKeyDown }: {
   currentQuestion: number; questions: Question[]; answers: string[]
   setAnswers: (a: string[]) => void; onNext: () => void; onBack: () => void
@@ -383,54 +485,66 @@ function QuestionStep({ currentQuestion, questions, answers, setAnswers, onNext,
   const qHint = typeof q === 'string' ? '' : (q?.hint ?? '')
   const { displayed, done } = useTypewriter(qText, 16)
   const isLast = currentQuestion === questions.length - 1
-  const progress = Math.round(((currentQuestion + 1) / questions.length) * 100)
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-2">
-        <h1 className="text-xl font-bold text-gray-900">
-          Question {currentQuestion + 1} <span className="text-gray-400 font-normal">of {questions.length}</span>
-        </h1>
-        <span className="text-sm font-medium text-[#1F4E79]">{progress}%</span>
-      </div>
-      <div className="h-1.5 bg-gray-200 rounded-full mb-8 overflow-hidden">
-        <div className="h-full bg-[#1F4E79] rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
-      </div>
+      {/* Journey stages header */}
+      <JourneyProgress currentQuestion={currentQuestion} totalQuestions={questions.length} />
+
+      {/* Coach avatar + question bubble */}
       <div className="flex items-start gap-3 mb-2">
-        <div className="w-10 h-10 rounded-full bg-[#1F4E79] flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#1F4E79]/30 mt-0.5">
-          <Sparkles className="w-5 h-5 text-white" />
+        <div className="w-10 h-10 rounded-xl bg-[#0A1F35] flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#0A1F35]/25 mt-0.5">
+          <svg width="18" height="18" viewBox="0 0 30 30" fill="none">
+            <path d="M9 21 L21 9 M21 9 H15.5 M21 9 V14.5"
+              stroke="#F59E0B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </div>
-        <div className="bg-[#1F4E79] text-white rounded-2xl rounded-tl-none px-6 py-5 shadow-lg shadow-[#1F4E79]/15 flex-1 min-h-[80px]">
+        <div className="bg-[#0A1F35] text-white rounded-2xl rounded-tl-none px-6 py-5 shadow-lg shadow-[#0A1F35]/15 flex-1 min-h-[80px]">
           <p className="text-base leading-relaxed">
             {displayed}
-            {!done && <span className="inline-block w-0.5 h-4 bg-white/60 animate-pulse ml-0.5 align-middle rounded-full" />}
+            {!done && <span className="inline-block w-0.5 h-4 bg-amber-400/70 animate-pulse ml-0.5 align-middle rounded-full" />}
           </p>
         </div>
       </div>
+
+      {/* Hint — appears after typewriter completes */}
       <div className={`ml-[52px] mb-5 transition-all duration-500 ${done && qHint ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1 pointer-events-none'}`}>
         <p className="text-xs text-gray-400 italic">💡 {qHint}</p>
       </div>
-      <div className={`transition-all duration-400 ${done ? 'opacity-100' : 'opacity-0'}`}>
+
+      {/* Answer textarea */}
+      <div className={`transition-all duration-500 ${done ? 'opacity-100' : 'opacity-0'}`}>
         <textarea
           ref={textareaRef}
           value={answers[currentQuestion]}
           onChange={e => { const next = [...answers]; next[currentQuestion] = e.target.value; setAnswers(next) }}
           onKeyDown={onKeyDown}
-          placeholder="Share your thoughts here… there are no right or wrong answers"
+          placeholder="Take your time. There are no right or wrong answers here."
           rows={5}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 resize-none focus:outline-none focus:ring-2 focus:ring-[#1F4E79]/30 focus:border-[#1F4E79] transition-all bg-white"
+          className="w-full border border-white/60 rounded-xl px-4 py-3.5 text-sm text-gray-700 resize-none focus:outline-none focus:ring-2 focus:ring-[#1F4E79]/20 focus:border-[#1F4E79]/40 transition-all bg-white/80 backdrop-blur placeholder:text-gray-400"
         />
         <p className="text-xs text-gray-400 mt-1.5 text-right">⌘+Enter to continue</p>
       </div>
-      <div className="flex gap-3 mt-5">
+
+      {/* Navigation */}
+      <div className="flex gap-3 mt-6">
         {currentQuestion > 0 && (
-          <button onClick={onBack} className="flex items-center gap-2 px-5 py-3 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-2 px-5 py-3 rounded-xl border border-gray-200 bg-white/60 text-gray-600 text-sm font-medium hover:bg-white transition-colors"
+          >
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
         )}
-        <button onClick={onNext} disabled={!done}
-          className="flex-1 bg-[#1F4E79] text-white font-semibold py-3 rounded-xl hover:bg-[#163a5e] transition-all flex items-center justify-center gap-2 disabled:opacity-40 shadow-md shadow-[#1F4E79]/20">
-          {isLast ? <><Sparkles className="w-4 h-4" />Generate My Career Analysis</> : <>Next question <ArrowRight className="w-4 h-4" /></>}
+        <button
+          onClick={onNext}
+          disabled={!done}
+          className="flex-1 bg-[#0A1F35] hover:bg-[#0F2742] text-white font-semibold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-40 shadow-lg shadow-[#0A1F35]/20"
+        >
+          {isLast
+            ? <><Sparkles className="w-4 h-4 text-amber-400" />Show me my portrait</>
+            : <>Continue <ArrowRight className="w-4 h-4" /></>
+          }
         </button>
       </div>
     </div>
