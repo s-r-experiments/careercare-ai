@@ -1,19 +1,16 @@
 export default function Logo({ light = false }: { light?: boolean }) {
+  const color = light ? '#ffffff' : '#1C1917'
   return (
-    <div className="flex items-center gap-2.5">
-      {/* Arrow mark: amber square + dark upper-right arrow */}
-      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="30" height="30" rx="8" fill="#F59E0B" />
-        <path
-          d="M9 21 L21 9 M21 9 H15.5 M21 9 V14.5"
-          stroke="#0A1F35"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+    <div className="flex items-center gap-3">
+      {/* Waypoint mark — a pause midway through a course */}
+      <svg width="34" height="14" viewBox="0 0 34 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="0" y1="7" x2="11" y2="7" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        <circle cx="17" cy="7" r="4.5" stroke={color} strokeWidth="1.5"/>
+        <circle cx="17" cy="7" r="1.5" fill={color}/>
+        <line x1="23" y1="7" x2="34" y2="7" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
       </svg>
-      <span className={`font-extrabold text-xl tracking-tight ${light ? 'text-white' : 'text-[#0A1F35]'}`}>
-        CareerCare
+      <span style={{ color }} className="font-semibold text-xl tracking-tight">
+        Midcourse
       </span>
     </div>
   )

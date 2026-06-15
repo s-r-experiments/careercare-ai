@@ -5,8 +5,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'CareerCare – Career clarity for people who want more',
-  description: 'Feeling stuck in your career? CareerCare holds a genuine career conversation with you, then hands you a personalised plan you can actually act on.',
+  title: 'Midcourse – Reflect on your career. Navigate what\'s next.',
+  description: 'A guided career reflection that helps you uncover patterns, strengths, and possible directions for the next chapter of your professional life.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
