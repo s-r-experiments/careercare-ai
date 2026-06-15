@@ -25,9 +25,21 @@ const PAIN_QUOTES = [
 ]
 
 const SAMPLE_QUESTIONS = [
-  "You've spent the last 4 years building at [Company]. What made you stay that long — and what's finally made you ready to leave?",
-  "What's the work that feels effortless to you, where others seem to visibly struggle?",
-  "If you could redesign your current role from scratch — what would you cut, what would you double down on?",
+  {
+    anchor: "We noticed you've spent the last 4 years at [Company] — your longest stretch by far.",
+    question: "What made you stay that long — and what's finally made you ready for something new?",
+    hint: "Think about what you were hoping to find there, versus what you actually found.",
+  },
+  {
+    anchor: "Your career shows a consistent pattern — you've moved from execution roles into ownership roles, each time.",
+    question: "What's the work that feels effortless to you, where others around you seem to visibly struggle?",
+    hint: "The answer is often something so natural to you that you haven't thought to mention it.",
+  },
+  {
+    anchor: "Looking at your last two roles, you've taken on scope that wasn't officially yours. We noticed that.",
+    question: "If you redesigned your next role from scratch — what would you cut entirely, and what would you double down on?",
+    hint: "You don't have to have a clear picture yet. What feels true right now is enough.",
+  },
 ]
 
 const FREE_FEATURES = [
@@ -90,8 +102,9 @@ export default function Home() {
               </h1>
 
               <p className="text-lg text-white/60 leading-relaxed mb-10 max-w-lg">
-                Feeling stuck? Not sure what&apos;s next? Wondering if you&apos;ve been underselling yourself?
-                CareerCare holds a genuine career conversation with you — then hands you a plan you can actually act on.
+                Most people spend years knowing something&apos;s off — but never quite finding the right words for it.
+                CareerCare sits down with you, reads your CV, asks the questions no one else has thought to ask —
+                and gives you a portrait of yourself as a professional that you can actually work from.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -240,28 +253,39 @@ export default function Home() {
       <section id="how-it-works" className="py-24 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-amber-500 font-bold text-sm uppercase tracking-widest mb-3">The conversation</p>
+            <p className="text-amber-500 font-bold text-sm uppercase tracking-widest mb-3">A glimpse of the conversation</p>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
-              Questions no one else<br />has thought to ask you
+              Questions built around<br />your actual story
             </h2>
             <p className="text-gray-500 max-w-xl mx-auto text-base">
-              We read your CV before we say a word. Then we ask questions built around your actual history — not a generic template.
+              We read your CV first — every company, every role, every transition. Then we ask the things that actually matter.
             </p>
           </div>
 
-          <div className="space-y-5">
-            {SAMPLE_QUESTIONS.map((q, i) => (
+          <div className="space-y-8">
+            {SAMPLE_QUESTIONS.map((item, i) => (
               <div key={i} className="flex items-start gap-4">
-                <div className="w-9 h-9 rounded-full bg-[#0F2742] flex items-center justify-center flex-shrink-0 mt-0.5 shadow-lg shadow-[#0F2742]/20">
-                  <span className="text-white text-xs font-bold">{i + 1}</span>
+                <div className="w-9 h-9 rounded-xl bg-[#0F2742] flex items-center justify-center flex-shrink-0 mt-0.5 shadow-lg shadow-[#0F2742]/20">
+                  <svg width="16" height="16" viewBox="0 0 30 30" fill="none">
+                    <path d="M9 21 L21 9 M21 9 H15.5 M21 9 V14.5" stroke="#F59E0B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </div>
-                <div className="bg-[#0F2742] text-white rounded-2xl rounded-tl-none px-6 py-4 flex-1 shadow-lg shadow-[#0F2742]/10">
-                  <p className="text-sm leading-relaxed text-white/90">{q}</p>
+                <div className="flex-1">
+                  {/* CV anchor — what we noticed */}
+                  <p className="text-xs text-gray-400 italic leading-relaxed border-l-2 border-amber-300 pl-3 mb-2">
+                    {item.anchor}
+                  </p>
+                  {/* Question bubble */}
+                  <div className="bg-[#0F2742] text-white rounded-2xl rounded-tl-none px-6 py-4 shadow-lg shadow-[#0F2742]/10 mb-2">
+                    <p className="text-sm leading-relaxed text-white/90">{item.question}</p>
+                  </div>
+                  {/* Hint */}
+                  <p className="text-xs text-gray-400 italic pl-1">💡 {item.hint}</p>
                 </div>
               </div>
             ))}
-            <div className="flex items-center gap-4 ml-[52px]">
-              <p className="text-gray-400 text-sm italic">And more — all built from your specific career history.</p>
+            <div className="ml-[52px]">
+              <p className="text-gray-400 text-sm italic">Every question is generated from your specific CV — no two conversations are the same.</p>
             </div>
           </div>
 
@@ -270,18 +294,18 @@ export default function Home() {
             {[
               {
                 step: '01',
-                heading: 'Share your career history',
-                body: 'Upload your CV. We read it thoroughly so every question is relevant to you — not some generic candidate.',
+                heading: 'We read your story',
+                body: 'Upload your CV. We study it — every company, every move, every gap between jobs. So when we ask you something, it lands.',
               },
               {
                 step: '02',
-                heading: 'Answer a few honest questions',
-                body: 'Take 10 minutes. Reflect genuinely. The more honest your answers, the sharper your portrait.',
+                heading: 'You have a real conversation',
+                body: 'Four chapters. Questions anchored in your specific history. Ten minutes of honest reflection that most people have never had about their career.',
               },
               {
                 step: '03',
-                heading: 'Walk away with clarity',
-                body: 'A positioning statement, 5 strengths with interview stories, 4 gaps to close, and a 90-day plan. Downloadable, yours to keep.',
+                heading: 'You leave knowing yourself',
+                body: 'A positioning statement you could say out loud. Strengths you can prove. Gaps you know how to close. A plan for the next 90 days.',
               },
             ].map(({ step, heading, body }, i) => (
               <div key={i} className="relative">

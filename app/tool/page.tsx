@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import Logo from '../components/Logo'
 
-interface Question { text: string; hint: string }
+interface Question { text: string; hint: string; cv_anchor?: string }
 interface Strength { strength: string; evidence: string; interview_story: string; relevance: string }
 interface Gap { gap: string; impact: string; action: string; timeline: string }
 interface ActionItem { phase: string; action: string; category: string; priority: string; target_date: string; notes: string }
@@ -48,27 +48,35 @@ const STEPS = [
   { label: 'Your Portrait', icon: Download },
 ]
 
-// ── Journey stages (replace question counter) ─────────────────────────
+// ── Journey stages — each is a chapter in the conversation ────────────
 const JOURNEY_STAGES = [
   {
-    label: 'Your story',
-    sub: 'Where you\'ve come from',
-    // questions in first ~30% of the set
+    chapter: 'Chapter I',
+    label: 'Your Story',
+    sub: "Where you've been, and what's brought you here",
+    gradient: 'from-violet-900 to-purple-800',
+    dim: 'bg-violet-50',
   },
   {
-    label: 'What drives you',
-    sub: 'Your values and what matters',
-    // questions in 30–57%
+    chapter: 'Chapter II',
+    label: 'What Drives You',
+    sub: 'Your values, your fuel — and what drains you',
+    gradient: 'from-blue-900 to-indigo-800',
+    dim: 'bg-sky-50',
   },
   {
-    label: 'Where you shine',
-    sub: 'Strengths you might not see yourself',
-    // questions in 57–86%
+    chapter: 'Chapter III',
+    label: 'Where You Shine',
+    sub: 'The things you do that others struggle with',
+    gradient: 'from-teal-900 to-emerald-800',
+    dim: 'bg-emerald-50',
   },
   {
-    label: 'What\'s next',
-    sub: 'Looking ahead with clarity',
-    // last ~14%
+    chapter: 'Chapter IV',
+    label: "What's Next",
+    sub: "The future you're ready to step into",
+    gradient: 'from-amber-900 to-orange-800',
+    dim: 'bg-amber-50',
   },
 ]
 
@@ -79,14 +87,6 @@ function getStageIndex(qIdx: number, total: number): number {
   if (pct <= 0.86) return 2
   return 3
 }
-
-// Stage background tints (very subtle, changes with each phase of the conversation)
-const STAGE_BG = [
-  'bg-violet-50',
-  'bg-sky-50',
-  'bg-emerald-50',
-  'bg-amber-50',
-]
 
 // ── Typewriter hook ────────────────────────────────────────────────────
 function useTypewriter(text: string, speed = 16) {
@@ -278,7 +278,7 @@ export default function ToolPage() {
   }
 
   const stageBg = step === 2 && questions.length > 0
-    ? STAGE_BG[getStageIndex(currentQuestion, questions.length)]
+    ? JOURNEY_STAGES[getStageIndex(currentQuestion, questions.length)].dim
     : 'bg-gray-50'
 
   return (
@@ -417,57 +417,34 @@ export default function ToolPage() {
 }
 
 // ══════════════════════════════════════════════════════════════════════
-// Journey progress bar — replaces the "Question X of Y" counter
+// Chapter stage card — replaces the dots progress bar
 // ══════════════════════════════════════════════════════════════════════
-function JourneyProgress({ currentQuestion, totalQuestions }: { currentQuestion: number; totalQuestions: number }) {
-  const stageIdx = getStageIndex(currentQuestion, totalQuestions)
+function StageHeader({ stageIdx }: { stageIdx: number }) {
   const stage = JOURNEY_STAGES[stageIdx]
-
   return (
-    <div className="mb-10">
-      {/* Stage name */}
-      <div className="mb-5">
-        <div className="flex items-center gap-2 mb-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-          <p className="text-xs font-bold text-[#1F4E79]/50 uppercase tracking-[0.18em]">{stage.sub}</p>
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0A1F35]">{stage.label}</h1>
+    <div className={`rounded-2xl p-6 mb-8 bg-gradient-to-br ${stage.gradient} relative overflow-hidden`}>
+      {/* Ambient background shapes */}
+      <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-white/5 pointer-events-none" />
+      <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-white/[0.03] pointer-events-none" />
+
+      {/* 4 chapter progress bars */}
+      <div className="flex gap-1.5 mb-6 relative z-10">
+        {JOURNEY_STAGES.map((_, i) => (
+          <div
+            key={i}
+            className={`h-[3px] flex-1 rounded-full transition-all duration-700 ${
+              i < stageIdx ? 'bg-white/80'
+              : i === stageIdx ? 'bg-white/50'
+              : 'bg-white/15'
+            }`}
+          />
+        ))}
       </div>
 
-      {/* 4-node journey path */}
-      <div className="flex items-start">
-        {JOURNEY_STAGES.map((s, i) => {
-          const isCompleted = i < stageIdx
-          const isCurrent = i === stageIdx
-          return (
-            <div key={i} className={`flex items-center ${i < JOURNEY_STAGES.length - 1 ? 'flex-1' : ''}`}>
-              <div className="flex flex-col items-center flex-shrink-0">
-                {/* Dot */}
-                <div className={`w-3 h-3 rounded-full transition-all duration-500 ${
-                  isCompleted
-                    ? 'bg-emerald-500'
-                    : isCurrent
-                    ? 'bg-[#1F4E79] ring-[5px] ring-[#1F4E79]/15'
-                    : 'bg-gray-300'
-                }`} />
-                {/* Label */}
-                <span className={`text-[10px] font-semibold mt-2 text-center leading-tight w-16 hidden sm:block transition-colors duration-300 ${
-                  isCurrent ? 'text-[#1F4E79]'
-                  : isCompleted ? 'text-emerald-500'
-                  : 'text-gray-300'
-                }`}>
-                  {s.label}
-                </span>
-              </div>
-              {/* Connector line */}
-              {i < JOURNEY_STAGES.length - 1 && (
-                <div className="flex-1 h-0.5 mx-2 mt-[5px] rounded-full overflow-hidden bg-gray-200 sm:mt-[5px]">
-                  <div className={`h-full bg-emerald-400 transition-all duration-700 ${isCompleted ? 'w-full' : 'w-0'}`} />
-                </div>
-              )}
-            </div>
-          )
-        })}
+      <div className="relative z-10">
+        <p className="text-[10px] font-bold uppercase tracking-[0.25em] mb-2 text-white/40">{stage.chapter}</p>
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-1.5 tracking-tight">{stage.label}</h2>
+        <p className="text-sm text-white/55 leading-relaxed">{stage.sub}</p>
       </div>
     </div>
   )
@@ -483,13 +460,31 @@ function QuestionStep({ currentQuestion, questions, answers, setAnswers, onNext,
   const q = questions[currentQuestion]
   const qText = typeof q === 'string' ? q : (q?.text ?? '')
   const qHint = typeof q === 'string' ? '' : (q?.hint ?? '')
+  const qAnchor = typeof q === 'string' ? '' : (q?.cv_anchor ?? '')
+  const stageIdx = getStageIndex(currentQuestion, questions.length)
   const { displayed, done } = useTypewriter(qText, 16)
   const isLast = currentQuestion === questions.length - 1
 
   return (
     <div>
-      {/* Journey stages header */}
-      <JourneyProgress currentQuestion={currentQuestion} totalQuestions={questions.length} />
+      {/* Chapter stage card */}
+      <StageHeader stageIdx={stageIdx} />
+
+      {/* Welcome note — only shown on first question */}
+      {currentQuestion === 0 && (
+        <div className="mb-6 bg-white/70 border border-white rounded-xl px-5 py-4 text-sm text-gray-600 leading-relaxed backdrop-blur-sm shadow-sm">
+          <span className="font-semibold text-[#0A1F35]">We&apos;ve read your CV.</span> Now we want to hear from you — in your own words. There are no right answers. The more honest you are, the sharper your portrait will be.
+        </div>
+      )}
+
+      {/* CV anchor — coach's observation from the CV */}
+      {qAnchor && (
+        <div className="ml-[52px] mb-2">
+          <p className="text-xs text-gray-400 leading-relaxed border-l-2 border-amber-300 pl-3 py-0.5 italic">
+            {qAnchor}
+          </p>
+        </div>
+      )}
 
       {/* Coach avatar + question bubble */}
       <div className="flex items-start gap-3 mb-2">
@@ -700,6 +695,9 @@ function ResultsStep({ synthesis, loading, email, setEmail, emailSubmitted, emai
           </div>
         </div>
       </FadeIn>
+
+      {/* ── Further questions — premium teaser ── */}
+      <FurtherQuestionsSection />
 
       {/* ── FREE: Next Step Intelligence ── */}
       <FadeIn delay={900}>
@@ -914,6 +912,46 @@ function ResultsStep({ synthesis, loading, email, setEmail, emailSubmitted, emai
         </div>
       </FadeIn>
     </div>
+  )
+}
+
+// ── Further questions — premium teaser ────────────────────────────────
+function FurtherQuestionsSection() {
+  const FURTHER_QS = [
+    "What's your current compensation — and what number would make your next move feel genuinely worth it?",
+    "Are there specific roles or titles you've been imagining? Or are you still figuring out what the next chapter looks like?",
+    "How do you feel about where you're based right now? Would you relocate, or is the ideal move a local one?",
+    "Are you open to a step sideways — same level, different domain — if the company or culture is a strong fit?",
+    "Is there a version of this story where the next move is internal — a different role or team at your current company?",
+  ]
+  return (
+    <FadeIn delay={750}>
+      <div className="mb-8">
+        <div className="border border-dashed border-[#1F4E79]/20 rounded-2xl p-6 bg-white/60">
+          <div className="flex items-center gap-2 mb-3">
+            <MessageSquare className="w-4 h-4 text-[#1F4E79]/50" />
+            <h2 className="font-bold text-[#0A1F35] text-base">Questions we still want to ask you</h2>
+            <span className="ml-auto text-xs font-semibold bg-amber-100 text-amber-700 px-2.5 py-0.5 rounded-full border border-amber-200">Premium</span>
+          </div>
+          <p className="text-sm text-gray-400 mb-5 leading-relaxed">
+            Your portrait is built on what you&apos;ve shared. But there&apos;s more we&apos;d want to explore — answers that would sharpen our guidance considerably.
+          </p>
+          <div className="space-y-3">
+            {FURTHER_QS.map((item, i) => (
+              <div key={i} className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                <div className="flex-shrink-0 mt-0.5 w-6 h-6 rounded-full bg-[#0A1F35]/5 flex items-center justify-center">
+                  <span className="text-[10px] font-bold text-[#0A1F35]/30">{i + 1}</span>
+                </div>
+                <p className="text-sm text-gray-500 leading-relaxed italic">&ldquo;{item}&rdquo;</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-400 mt-5 text-center leading-relaxed">
+            In CareerCare Premium, we go deeper on each of these — and use your answers to surface specific companies, live roles, and a tighter plan.
+          </p>
+        </div>
+      </div>
+    </FadeIn>
   )
 }
 
