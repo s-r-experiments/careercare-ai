@@ -1,31 +1,7 @@
 /*
- GOOGLE SHEETS SETUP (one-time, 5 minutes):
- 1. Create a new Google Sheet. Add these column headers in row 1:
-    Timestamp | Rating | What Worked (tags) | What Worked (text) | Improvement | Name | Email | CV User
- 2. In the sheet: Extensions → Apps Script → paste this code:
-
-    function doPost(e) {
-      const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-      const d = JSON.parse(e.postData.contents);
-      sheet.appendRow([
-        new Date(),
-        d.rating || '',
-        (d.workedWhat || []).join(', '),
-        d.workedText || '',
-        d.improvement || '',
-        d.name || '',
-        d.email || '',
-        d.userName || ''
-      ]);
-      return ContentService.createTextOutput('ok');
-    }
-
- 3. Click Deploy → New deployment → Web App
-    · Execute as: Me
-    · Who has access: Anyone
- 4. Copy the Web App URL
- 5. Add to Vercel env vars: FEEDBACK_WEBHOOK_URL=<paste URL>
-    Also add it to .env.local for local dev.
+ GOOGLE SHEETS SETUP — see scripts/google-apps-script-webhook.gs for the
+ Apps Script source (handles this feedback action plus 'cv' and 'session',
+ each sent by other routes to the same FEEDBACK_WEBHOOK_URL).
 */
 
 import { NextRequest, NextResponse } from 'next/server'
