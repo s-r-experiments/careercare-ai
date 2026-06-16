@@ -5,8 +5,7 @@ function getGroq() {
   return new Groq({ apiKey: process.env.GROQ_API_KEY || '' })
 }
 
-// Michael Page India Salary Guide 2026 — reserved for premium salary insight feature
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// Michael Page India Salary Guide 2026 — used to ground the indicative salary range insight
 const SALARY_BENCHMARKS = `
 === INDIA SALARY BENCHMARKS 2026 (Michael Page, base CTC ₹L/year, excl. bonuses/ESOPs) ===
 
@@ -129,6 +128,9 @@ FIVE RULES THAT CANNOT BE BROKEN:
 
 5. USE THEIR OWN LANGUAGE. The positioning statement must sound like THEM, not a LinkedIn headline generator. Pull their actual phrases and cadence. If they speak plainly, the statement should be plain. If they used a striking metaphor, use it.
 
+To estimate an indicative salary range for their next move, ground it in this real benchmark data — do not invent figures that ignore it:
+${SALARY_BENCHMARKS}
+
 Produce a JSON object matching this exact shape:
 {
   "name": string,
@@ -160,7 +162,11 @@ Produce a JSON object matching this exact shape:
     "roles": string[],
     "sectors": string[],
     "location": string,
-    "timeline": string
+    "timeline": string,
+    "salary_min": string,
+    "salary_max": string,
+    "salary_aspirational": string,
+    "salary_basis": string
   },
   "top_strengths": [{ "strength": string, "evidence": string, "cited_from": string, "interview_story": string, "relevance": string }],
   "key_gaps": [{ "gap": string, "surfaced_by": string, "impact": string, "action": string, "timeline": string }],
@@ -186,6 +192,9 @@ Rules:
 - action_plan: exactly 16 items (4 per phase). Phases: "Days 1–15 (Foundation)" | "Days 16–30 (Network + Prep)" | "Days 31–45 (Active Search)" | "Days 46–90 (Offers)"
 - company_categories: exactly 4 concrete types derived from their energy map and targets
 - priority_skills: exactly 3 skills, each connected to something they said or a gap you identified
+- salary_min / salary_max: an indicative annual CTC range (e.g. "₹70L" and "₹110L") for their realistic next move, chosen by matching their role/domain/seniority/years of experience against the INDIA SALARY BENCHMARKS table above. Interpolate sensibly if their experience falls between listed brackets
+- salary_aspirational: a single stretch figure (e.g. "₹130L") applying the job-change or niche-skill premium noted in the Market Context section of the benchmarks, if it plausibly applies to them
+- salary_basis: one short sentence naming exactly which row/category and seniority bracket you matched them to (e.g. "Matched to Product Management, 10-15 yrs, Technology sector"). If their CV/target is clearly outside India, say so explicitly and still give your best indicative range with that caveat
 - Return only valid JSON, no markdown`,
         },
         {

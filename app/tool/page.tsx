@@ -28,7 +28,7 @@ interface Synthesis {
   name: string
   positioning_statement: string
   current_state: { role: string; company: string; experience: string; domain: string; ctc_approx: string; notice_period: string }
-  target_state: { roles: string[]; sectors: string[]; location: string; timeline: string }
+  target_state: { roles: string[]; sectors: string[]; location: string; timeline: string; salary_min?: string; salary_max?: string; salary_aspirational?: string; salary_basis?: string }
   top_strengths: Strength[]
   key_gaps: Gap[]
   action_plan: ActionItem[]
@@ -1068,6 +1068,8 @@ function ResultsStep({ synthesis, loading, email, setEmail, emailSubmitted, emai
                 ['Sectors', (ts.sectors || []).slice(0, 2).join(', ')],
                 ['Location', ts.location],
                 ['Timeline', ts.timeline],
+                ['Indicative Range', ts.salary_min && ts.salary_max ? `${ts.salary_min} – ${ts.salary_max}` : ''],
+                ['Stretch (best case)', ts.salary_aspirational],
               ] as [string, string][]).filter(([, v]) => v).map(([k, v]) => (
                 <div key={k} className="flex justify-between gap-3">
                   <dt className="text-stone-400 flex-shrink-0 font-light">{k}</dt>
@@ -1077,6 +1079,11 @@ function ResultsStep({ synthesis, loading, email, setEmail, emailSubmitted, emai
             </dl>
           </div>
         </div>
+        {ts.salary_basis && (
+          <p className="text-xs text-stone-400 font-light -mt-2 mb-6 px-1">
+            {ts.salary_basis} — indicative only, based on the Michael Page India Salary Guide 2026.
+          </p>
+        )}
       </FadeIn>
 
       {/* Signal Moments */}

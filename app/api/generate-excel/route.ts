@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
         name: string
         positioning_statement: string
         current_state: Record<string, string>
-        target_state: { roles: string[]; sectors: string[]; location: string; salary_min: string; salary_max: string; salary_aspirational: string; timeline: string }
+        target_state: { roles: string[]; sectors: string[]; location: string; salary_min: string; salary_max: string; salary_aspirational: string; salary_basis: string; timeline: string }
         top_strengths: Strength[]
         key_gaps: Gap[]
         action_plan: ActionItem[]
@@ -91,6 +91,9 @@ export async function POST(req: NextRequest) {
       ['Target Sectors', (ts.sectors || []).join(', ')],
       ['Location', ts.location],
       ['Timeline', ts.timeline],
+      ['Indicative Salary Range', ts.salary_min && ts.salary_max ? `${ts.salary_min} – ${ts.salary_max}` : ''],
+      ['Stretch (best case)', ts.salary_aspirational],
+      ['Salary Basis', ts.salary_basis ? `${ts.salary_basis} (indicative, Michael Page India Salary Guide 2026)` : ''],
     ].forEach(([k, v], i) => {
       const r = s1.addRow([k, v])
       altRow(r, i)
