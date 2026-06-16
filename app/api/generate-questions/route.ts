@@ -40,6 +40,7 @@ For EACH question:
 - "cv_anchor": 1–2 warm sentences referencing a SPECIFIC detail from the CV — company name, a transition, a gap, a tenure length, a domain shift. Must feel like you truly read their story. Start with "We noticed...", "Your CV shows...", "You've moved from [X] to [Y]...", "We see you spent [N] years at [Company]..."
 - "text": the question itself — flows naturally from the cv_anchor, specific and human
 - "hint": one sentence that helps them access the memory or feeling — not a generic prompt, something that opens the door
+- "sample_answers": exactly 3 short illustrative example answers (1–2 sentences each) showing different ways someone might approach this question, each written in first person and each attributed to a distinct, plausible designation (e.g. "VP of Engineering, 12 yrs", "Marketing Lead, 6 yrs"). These exist purely to spark the user's own thinking if they're stuck — they are not real testimonials, so keep them generic enough that they don't read as a specific real person's career, but concrete and specific in tone (a real detail or scenario, not a vague platitude)
 
 Tone: like a brilliant coach who has done their homework. Warm but not soft. Curious but not clinical.
 
@@ -49,9 +50,9 @@ Return JSON:
     {
       "name": "Your Story",
       "questions": [
-        { "text": string, "cv_anchor": string, "hint": string },
-        { "text": string, "cv_anchor": string, "hint": string },
-        { "text": string, "cv_anchor": string, "hint": string }
+        { "text": string, "cv_anchor": string, "hint": string, "sample_answers": [{ "text": string, "designation": string }, { "text": string, "designation": string }, { "text": string, "designation": string }] },
+        { "text": string, "cv_anchor": string, "hint": string, "sample_answers": [...3 items as above] },
+        { "text": string, "cv_anchor": string, "hint": string, "sample_answers": [...3 items as above] }
       ]
     },
     { "name": "What Matters Most", "questions": [ ...3 questions... ] },
@@ -63,10 +64,10 @@ Return JSON:
         { role: 'user', content: cvText },
       ],
       response_format: { type: 'json_object' },
-      max_tokens: 3000,
+      max_tokens: 5000,
     })
     const content = completion.choices[0].message.content || '{}'
-    const parsed = JSON.parse(content) as { pillars?: { name: string; questions: { text: string; cv_anchor?: string; hint: string }[] }[] }
+    const parsed = JSON.parse(content) as { pillars?: { name: string; questions: { text: string; cv_anchor?: string; hint: string; sample_answers?: { text: string; designation: string }[] }[] }[] }
     return NextResponse.json({ pillars: parsed.pillars || [] })
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Unknown error'

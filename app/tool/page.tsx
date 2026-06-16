@@ -10,7 +10,8 @@ import {
 } from 'lucide-react'
 import Logo from '../components/Logo'
 
-interface Question { text: string; hint: string; cv_anchor?: string }
+interface SampleAnswer { text: string; designation: string }
+interface Question { text: string; hint: string; cv_anchor?: string; sample_answers?: SampleAnswer[] }
 interface PillarData { name: string; questions: Question[] }
 interface Strength { strength: string; evidence: string; cited_from?: string; interview_story: string; relevance: string }
 interface Gap { gap: string; surfaced_by?: string; impact: string; action: string; timeline: string }
@@ -841,8 +842,11 @@ function QuestionStep({ currentRound, currentPillarIdx, pillars, allAnswers, set
   const qText = q?.text ?? ''
   const qHint = q?.hint ?? ''
   const qAnchor = q?.cv_anchor ?? ''
+  const qSamples = q?.sample_answers ?? []
   const totalAnswered = allAnswers.filter(a => a.trim().length > 0).length
   const { displayed, done } = useTypewriter(qText, 16)
+  const [showSamples, setShowSamples] = useState(false)
+  useEffect(() => { setShowSamples(false) }, [qText])
   const isFirstEver = currentRound === 1 && currentPillarIdx === 0
   const isLastOfRound = currentPillarIdx === pillars.length - 1
   const isLastRound = currentRound === 3
@@ -897,6 +901,29 @@ function QuestionStep({ currentRound, currentPillarIdx, pillars, allAnswers, set
       <div className={`ml-[52px] mb-5 transition-all duration-500 ${done && qHint ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1 pointer-events-none'}`}>
         <p className="text-xs text-stone-400 italic font-light">💡 {qHint}</p>
       </div>
+
+      {/* Example answers — illustrative, to spark thinking when stuck */}
+      {done && qSamples.length > 0 && (
+        <div className="ml-[52px] mb-5">
+          <button
+            onClick={() => setShowSamples(s => !s)}
+            className="text-xs text-stone-400 hover:text-stone-600 transition-colors underline underline-offset-2"
+          >
+            {showSamples ? 'Hide example answers' : 'Need a starting point? See example answers'}
+          </button>
+          {showSamples && (
+            <div className="mt-3 grid sm:grid-cols-3 gap-3">
+              {qSamples.slice(0, 3).map((s, i) => (
+                <div key={i} className="bg-white/70 border border-stone-200 rounded-xl px-4 py-3 text-xs text-stone-500 leading-relaxed font-light">
+                  <p className="italic mb-1.5">&ldquo;{s.text}&rdquo;</p>
+                  <p className="text-stone-400 not-italic">— {s.designation}</p>
+                </div>
+              ))}
+              <p className="text-[10px] text-stone-300 font-light sm:col-span-3">Illustrative examples to spark your thinking — not real responses.</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Answer textarea */}
       <div className={`transition-all duration-500 ${done ? 'opacity-100' : 'opacity-0'}`}>
