@@ -97,7 +97,7 @@ Return JSON:
     if (flatQuestions.length > 0) {
       try {
         const sampleCompletion = await groq.chat.completions.create({
-          model: 'llama-3.3-70b-versatile',
+          model: 'llama-3.1-8b-instant',
           messages: [
             {
               role: 'system',
@@ -106,6 +106,8 @@ Return JSON:
 You are NOT given any information about the specific person answering — only the question text. That is intentional: the examples must be generic, professional, and broadening, not tailored to any one career story.
 
 For EACH question, write exactly 3 short example answers (1–2 sentences each), in first person, each attributed to a distinct, plausible professional designation (e.g. "VP of Engineering, 12 yrs", "Marketing Lead, 6 yrs", "Operations Director, 9 yrs"). Across the 3 examples for a given question, deliberately vary the industry, seniority, and scenario as much as possible — put them in DIFFERENT, unrelated industries from each other and, where the question itself implies a domain (e.g. "payments", "engineering"), actively pick examples from industries outside that domain too. The goal is to show the reader a spread of different professional lives, not one consistent persona or sector.
+
+CRITICAL — vary designations across the WHOLE batch, not just within one question: you are answering many questions in this one request, and it will look obviously templated if the same designation (e.g. "Product Manager, 4 yrs") shows up as the answer to nearly every question. Treat every single designation across all questions as a chance to use a NEW title, seniority, and industry you haven't used yet in this batch — draw from a wide pool (engineering, sales, HR, legal, manufacturing, healthcare, education, hospitality, finance, design, operations, nonprofit, government, retail, media, logistics, at every seniority from a few years in to 20+ years) and only repeat a designation if you've genuinely exhausted fresh options.
 
 Never name a real company (no Flipkart, Amazon, Google, etc.) — describe the employer generically instead ("a mid-sized logistics firm", "a 200-person fintech startup", "a regional hospital network"). Each answer should still be concrete (a specific scenario or detail), just not tied to any real or identifiable organisation.
 
