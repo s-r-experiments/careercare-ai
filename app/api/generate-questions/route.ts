@@ -38,21 +38,23 @@ Bad: "Where do you see yourself in 5 years?"
 
 For EACH question:
 - "cv_anchor": 1–2 warm sentences referencing a SPECIFIC detail from the CV — company name, a transition, a gap, a tenure length, a domain shift. Must feel like you truly read their story. Start with "We noticed...", "Your CV shows...", "You've moved from [X] to [Y]...", "We see you spent [N] years at [Company]..."
-- "text": the question itself — flows naturally from the cv_anchor, specific and human
+- "text": the question itself — flows naturally from the cv_anchor, specific and human. IMPORTANT: never repeat a company name or other identifying proper noun from cv_anchor inside "text" — refer back to it generically instead ("that move", "your time there", "this transition", "the company you joined after"). The cv_anchor already carries the specific detail; "text" should still make sense as a question even read on its own, without naming the company again.
 - "hint": one sentence that helps them access the memory or feeling — not a generic prompt, something that opens the door
-- "sample_answers": exactly 3 short illustrative example answers (1–2 sentences each) showing different ways someone might approach this question, each written in first person and each attributed to a distinct, plausible designation (e.g. "VP of Engineering, 12 yrs", "Marketing Lead, 6 yrs"). These exist purely to spark the user's own thinking if they're stuck — they are not real testimonials, so keep them generic enough that they don't read as a specific real person's career, but concrete and specific in tone (a real detail or scenario, not a vague platitude)
 
 Tone: like a brilliant coach who has done their homework. Warm but not soft. Curious but not clinical.
 
+Also return "companies": every company/organisation name that appears anywhere in the CV (for our own internal bookkeeping, not shown to the user).
+
 Return JSON:
 {
+  "companies": string[],
   "pillars": [
     {
       "name": "Your Story",
       "questions": [
-        { "text": string, "cv_anchor": string, "hint": string, "sample_answers": [{ "text": string, "designation": string }, { "text": string, "designation": string }, { "text": string, "designation": string }] },
-        { "text": string, "cv_anchor": string, "hint": string, "sample_answers": [...3 items as above] },
-        { "text": string, "cv_anchor": string, "hint": string, "sample_answers": [...3 items as above] }
+        { "text": string, "cv_anchor": string, "hint": string },
+        { "text": string, "cv_anchor": string, "hint": string },
+        { "text": string, "cv_anchor": string, "hint": string }
       ]
     },
     { "name": "What Matters Most", "questions": [ ...3 questions... ] },
@@ -64,11 +66,74 @@ Return JSON:
         { role: 'user', content: cvText },
       ],
       response_format: { type: 'json_object' },
-      max_tokens: 5000,
+      max_tokens: 3000,
     })
     const content = completion.choices[0].message.content || '{}'
-    const parsed = JSON.parse(content) as { pillars?: { name: string; questions: { text: string; cv_anchor?: string; hint: string; sample_answers?: { text: string; designation: string }[] }[] }[] }
-    return NextResponse.json({ pillars: parsed.pillars || [] })
+    const parsed = JSON.parse(content) as {
+      companies?: string[]
+      pillars?: { name: string; questions: { text: string; cv_anchor?: string; hint: string; sample_answers?: { text: string; designation: string }[] }[] }[]
+    }
+    const pillars = parsed.pillars || []
+    const companies = parsed.companies || []
+
+    // The model sometimes ignores the "don't repeat the company name in text"
+    // instruction above, so redact known company names before this text is used
+    // to generate sample answers — otherwise they leak straight through into the
+    // "generic" examples too.
+    const redactCompanies = (text: string): string => {
+      let result = text
+      for (const company of [...companies].sort((a, b) => b.length - a.length)) {
+        if (!company) continue
+        const escaped = company.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        result = result.replace(new RegExp(escaped, 'gi'), 'that company')
+      }
+      return result
+    }
+
+    // Second pass — generate sample answers from the question text ALONE, with no CV
+    // in context (and with any company names redacted), so they read as generic,
+    // broadening perspectives rather than echoes of the user's own career details.
+    const flatQuestions = pillars.flatMap(p => p.questions.map(q => redactCompanies(q.text)))
+    if (flatQuestions.length > 0) {
+      try {
+        const sampleCompletion = await groq.chat.completions.create({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: `You write illustrative example answers for career-reflection questions, to help someone who's stuck see a few different angles before writing their own answer in their own words.
+
+You are NOT given any information about the specific person answering — only the question text. That is intentional: the examples must be generic, professional, and broadening, not tailored to any one career story.
+
+For EACH question, write exactly 3 short example answers (1–2 sentences each), in first person, each attributed to a distinct, plausible professional designation (e.g. "VP of Engineering, 12 yrs", "Marketing Lead, 6 yrs", "Operations Director, 9 yrs"). Across the 3 examples for a given question, deliberately vary the industry, seniority, and scenario as much as possible — put them in DIFFERENT, unrelated industries from each other and, where the question itself implies a domain (e.g. "payments", "engineering"), actively pick examples from industries outside that domain too. The goal is to show the reader a spread of different professional lives, not one consistent persona or sector.
+
+Never name a real company (no Flipkart, Amazon, Google, etc.) — describe the employer generically instead ("a mid-sized logistics firm", "a 200-person fintech startup", "a regional hospital network"). Each answer should still be concrete (a specific scenario or detail), just not tied to any real or identifiable organisation.
+
+Return JSON:
+{ "answers": [ { "sample_answers": [{ "text": string, "designation": string }, { "text": string, "designation": string }, { "text": string, "designation": string }] }, ... one entry per question, in the exact order given ] }`,
+            },
+            { role: 'user', content: flatQuestions.map((q, i) => `${i + 1}. ${q}`).join('\n\n') },
+          ],
+          response_format: { type: 'json_object' },
+          max_tokens: 3500,
+        })
+        const sampleContent = sampleCompletion.choices[0].message.content || '{}'
+        const sampleParsed = JSON.parse(sampleContent) as { answers?: { sample_answers?: { text: string; designation: string }[] }[] }
+        const sampleAnswers = sampleParsed.answers || []
+
+        let idx = 0
+        for (const pillar of pillars) {
+          for (const q of pillar.questions) {
+            q.sample_answers = sampleAnswers[idx]?.sample_answers || []
+            idx++
+          }
+        }
+      } catch {
+        // sample answers are a nice-to-have — proceed without them if this pass fails
+      }
+    }
+
+    return NextResponse.json({ pillars })
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Unknown error'
     return NextResponse.json({ error: msg }, { status: 500 })
