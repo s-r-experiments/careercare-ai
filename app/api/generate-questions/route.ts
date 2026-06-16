@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Groq from 'groq-sdk'
+import { SERVICE_UNAVAILABLE_MESSAGE } from '../../lib/errors'
 
 function getGroq() {
   return new Groq({ apiKey: process.env.GROQ_API_KEY || '' })
@@ -137,7 +138,7 @@ Return JSON:
 
     return NextResponse.json({ pillars })
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'Unknown error'
-    return NextResponse.json({ error: msg }, { status: 500 })
+    console.error('generate-questions failed:', e)
+    return NextResponse.json({ error: SERVICE_UNAVAILABLE_MESSAGE }, { status: 500 })
   }
 }

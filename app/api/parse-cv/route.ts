@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
+import { SERVICE_UNAVAILABLE_MESSAGE } from '../../lib/errors'
 
 export async function POST(req: NextRequest) {
   try {
@@ -45,7 +46,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ text, recordId })
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'Unknown error'
-    return NextResponse.json({ error: msg }, { status: 500 })
+    console.error('parse-cv failed:', e)
+    return NextResponse.json({ error: SERVICE_UNAVAILABLE_MESSAGE }, { status: 500 })
   }
 }
