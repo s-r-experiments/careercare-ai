@@ -209,14 +209,8 @@ export default function Home() {
 
       {/* ── Nav — logo centered, sticky ─────────────────────── */}
       <nav className="sticky top-0 z-50 bg-white px-6 py-4 border-b border-stone-100 shadow-sm">
-        <div className="max-w-6xl mx-auto relative flex items-center justify-center">
+        <div className="max-w-6xl mx-auto flex items-center justify-center">
           <Logo />
-          <Link
-            href="/tool"
-            className="absolute right-0 bg-[#1C1917] hover:bg-stone-800 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
-          >
-            Begin →
-          </Link>
         </div>
       </nav>
 
