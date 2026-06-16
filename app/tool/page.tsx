@@ -48,6 +48,50 @@ const PROCESSING_MESSAGES = [
   'Completing your career narrative…',
 ]
 
+const RESEARCH_INSIGHTS = [
+  { stat: '23%', body: 'better performance on tasks after structured reflection on your work', source: 'Harvard Business School, 2014' },
+  { stat: '6×', body: 'more likely to be engaged at work when you use your strengths every day', source: 'Gallup, State of the American Workplace' },
+  { stat: '15%', body: 'less likely to leave a role that genuinely fits your strengths', source: 'Gallup Workplace Research' },
+  { stat: '3×', body: 'higher reported quality of life among people who use their strengths daily', source: 'Gallup Wellbeing Research' },
+  { stat: '12.5%', body: 'more productive when managers focus on strengths instead of weaknesses', source: 'Gallup Workplace Research' },
+  { stat: 'Clarity', body: 'Greater clarity on career direction is linked to higher satisfaction and a better long-term fit', source: 'Career Success Criteria Clarity research' },
+]
+
+function pickThreeInsights(): number[] {
+  const pool = RESEARCH_INSIGHTS.map((_, i) => i)
+  const picked: number[] = []
+  while (picked.length < 3 && pool.length) {
+    picked.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0])
+  }
+  return picked
+}
+
+function FloatingInsights() {
+  const [indices, setIndices] = useState<number[]>(() => pickThreeInsights())
+  useEffect(() => {
+    const t = setInterval(() => setIndices(pickThreeInsights()), 4500)
+    return () => clearInterval(t)
+  }, [])
+  return (
+    <div className="mt-10 w-full max-w-2xl mx-auto grid sm:grid-cols-3 gap-4 px-2">
+      {indices.map((idx, slot) => {
+        const insight = RESEARCH_INSIGHTS[idx]
+        return (
+          <div
+            key={`${idx}-${slot}`}
+            className="insight-tile bg-white rounded-xl p-4 border border-stone-200 shadow-sm text-left"
+            style={{ animationDelay: `${slot * 150}ms` }}
+          >
+            <p className="text-xl font-semibold text-[#1C1917] tracking-tight mb-1">{insight.stat}</p>
+            <p className="text-xs text-stone-500 font-light leading-snug">{insight.body}</p>
+            <p className="text-[10px] text-stone-300 mt-1.5 font-light">{insight.source}</p>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 const STEPS = [
   { label: 'Your Story', icon: Upload },
   { label: 'The Reflection', icon: MessageSquare },
@@ -929,6 +973,7 @@ function ProcessingStep({ msg }: { msg: string }) {
         {msg}<span className="opacity-40">{dots}</span>
       </p>
       <p className="text-sm text-stone-300 mt-3 font-light">Give it 20–30 seconds.</p>
+      <FloatingInsights />
     </div>
   )
 }

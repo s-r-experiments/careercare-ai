@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Check, ChevronRight } from 'lucide-react'
-import Logo from './components/Logo'
+import Logo, { LogoMark } from './components/Logo'
 import HeroSlideshow from './components/HeroSlideshow'
 
 export const metadata: Metadata = {
@@ -115,6 +115,24 @@ const jsonLd = {
     },
   ],
 }
+
+const RESEARCH_STATS = [
+  {
+    stat: '23%',
+    body: 'better performance on subsequent tasks after structured reflection on your work',
+    source: 'Harvard Business School, 2014',
+  },
+  {
+    stat: '6×',
+    body: 'more likely to be engaged at work when you use your strengths every day',
+    source: 'Gallup, State of the American Workplace',
+  },
+  {
+    stat: '15%',
+    body: 'less likely to leave a role that genuinely fits your strengths',
+    source: 'Gallup Workplace Research',
+  },
+]
 
 const RECOGNITION_MOMENTS = [
   {
@@ -309,10 +327,23 @@ export default function Home() {
           <blockquote className="text-3xl sm:text-4xl font-light text-[#78716C] leading-[1.4] tracking-tight mb-8">
             But most careers run on autopilot — years passing without a moment of genuine reflection.
           </blockquote>
-          <div className="w-8 h-px bg-[#1C1917]/20 mx-auto mb-8" />
+          <div className="flex justify-center mb-8">
+            <LogoMark className="opacity-30" />
+          </div>
           <p className="text-xl font-light text-[#1C1917] tracking-tight mb-10">
             Midcourse is that pause.
           </p>
+
+          {/* Research-backed case for reflection */}
+          <div className="grid sm:grid-cols-3 gap-4 mb-10">
+            {RESEARCH_STATS.map(({ stat, body, source }, i) => (
+              <div key={i} className="bg-white rounded-xl p-5 border border-[#E7E5E4] text-left">
+                <p className="text-3xl font-semibold text-[#1C1917] tracking-tight mb-1">{stat}</p>
+                <p className="text-sm text-[#78716C] font-light leading-snug">{body}</p>
+                <p className="text-[11px] text-[#A8A29E] mt-2 font-light">{source}</p>
+              </div>
+            ))}
+          </div>
 
           {/* People strip — faces that ground this in real humans */}
           <div className="flex items-center justify-center gap-0 mt-2">
@@ -430,6 +461,9 @@ export default function Home() {
       <section id="the-reflection" className="py-16 px-6 bg-[#FAF8F5]">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
+            <div className="flex justify-center mb-4">
+              <LogoMark className="opacity-25" />
+            </div>
             <p className="text-[#A8A29E] font-medium text-sm uppercase tracking-[0.2em] mb-4">The guided conversation</p>
             <h2 className="text-3xl sm:text-4xl font-light text-[#1C1917] mb-4 tracking-tight">
               Questions built around<br />your actual story
@@ -588,6 +622,9 @@ export default function Home() {
             ))}
           </div>
 
+          <div className="flex justify-center mb-5">
+            <LogoMark className="opacity-25" />
+          </div>
           <p className="text-[#A8A29E] font-medium text-sm uppercase tracking-[0.2em] mb-5">Begin</p>
           <h2 className="text-4xl sm:text-5xl font-light text-[#1C1917] mb-6 leading-[1.2] tracking-tight">
             Ten minutes.<br />A lifetime of context.
