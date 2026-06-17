@@ -640,7 +640,7 @@ function ModeSelectionStep({ onSelect }: { onSelect: (m: 'full' | 'quick') => vo
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-xs text-white/30 font-light">~10 minutes</span>
+            <span className="text-xs text-white/30 font-light">~15 minutes</span>
             <div className="flex items-center gap-1.5 text-white/60 group-hover:text-white/90 transition-colors text-sm font-medium">
               Begin <ArrowRight className="w-4 h-4" />
             </div>
