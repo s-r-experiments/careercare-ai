@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Check, ChevronRight } from 'lucide-react'
 import Logo, { LogoMark } from './components/Logo'
-import HeroSlideshow from './components/HeroSlideshow'
 
 export const metadata: Metadata = {
   title: 'Midcourse | Free AI Career Reflection & Coaching Tool',
@@ -240,7 +239,12 @@ export default function Home() {
 
       {/* ── Hero ──────────────────────────────────────────────── */}
       <section className="relative min-h-[calc(100vh-64px)] flex items-center px-6 py-12 overflow-hidden bg-[#1C1917]">
-        <HeroSlideshow />
+        {/* Premium gradient background — no images, no load flicker */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -bottom-32 -left-32 w-[700px] h-[700px] rounded-full bg-amber-600/[0.22] blur-[120px]" />
+          <div className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full bg-emerald-800/[0.25] blur-[100px]" />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAyKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2cpIi8+PC9zdmc+')] opacity-60" />
+        </div>
 
         <div className="max-w-6xl mx-auto w-full relative z-10">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
@@ -248,19 +252,29 @@ export default function Home() {
             {/* Left: Copy */}
             <div>
               <div className="inline-flex items-center gap-2 bg-white/8 text-white/60 text-xs font-medium px-3.5 py-1.5 rounded-full mb-8 border border-white/8 tracking-wide">
-                <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
-                Free · No account required
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400/70" />
+                AI Career Reflection · Free · 10 min
               </div>
 
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white leading-[1.06] tracking-tight mb-3">
-                Reflect on your career.
+                Your next career move,
               </h1>
-              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white/40 leading-[1.06] tracking-tight mb-8">
-                Navigate what&apos;s next.
+              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white/40 leading-[1.06] tracking-tight mb-7">
+                made clear.
               </h2>
 
+              {/* 3-step process — immediately shows the mechanism */}
+              <div className="flex items-center gap-3 mb-8 flex-wrap">
+                {['Upload your CV', 'Answer 12 questions', 'Get your analysis'].map((s, i) => (
+                  <span key={s} className="flex items-center gap-3">
+                    <span className="text-sm text-white/50 font-light">{s}</span>
+                    {i < 2 && <ArrowRight className="w-3 h-3 text-white/20 shrink-0" />}
+                  </span>
+                ))}
+              </div>
+
               <p className="text-lg text-white/55 leading-relaxed mb-10 max-w-lg font-light">
-                A guided career reflection that helps you uncover patterns, strengths, and possible directions for the next chapter of your professional life.
+                Midcourse reads your career story, asks the questions great coaches ask, and returns a personalised report — your strengths, blind spots, and clearest next steps.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
