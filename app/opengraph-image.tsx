@@ -30,7 +30,7 @@ export default function Image() {
         </div>
 
         {/* Brand name */}
-        <div style={{ color: 'white', fontSize: '88px', fontWeight: '600', letterSpacing: '-3px', marginBottom: '28px', display: 'flex' }}>
+        <div style={{ color: 'white', fontSize: '88px', fontWeight: '800', letterSpacing: '-3px', marginBottom: '28px', display: 'flex' }}>
           Midcourse
         </div>
 

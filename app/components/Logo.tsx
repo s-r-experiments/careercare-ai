@@ -16,7 +16,7 @@ export default function Logo({ light = false }: { light?: boolean }) {
     <div className="flex items-center gap-3">
       {/* Waypoint mark — a pause midway through a course */}
       <LogoMark light={light} />
-      <span style={{ color }} className="font-semibold text-xl tracking-tight">
+      <span style={{ color }} className="font-extrabold text-xl tracking-tight">
         Midcourse
       </span>
     </div>
