@@ -166,7 +166,6 @@ Produce a JSON object matching this exact shape:
     "timeline": string,
     "salary_min": string,
     "salary_max": string,
-    "salary_aspirational": string,
     "salary_basis": string
   },
   "top_strengths": [{ "strength": string, "evidence": string, "cited_from": string, "interview_story": string, "relevance": string }],
@@ -194,7 +193,6 @@ Rules:
 - company_categories: exactly 4 concrete types derived from their energy map and targets
 - priority_skills: exactly 3 skills, each connected to something they said or a gap you identified
 - salary_min / salary_max: an indicative annual CTC range (e.g. "₹70L" and "₹110L") for their realistic next move, chosen by matching their role/domain/seniority/years of experience against the INDIA SALARY BENCHMARKS table above. Interpolate sensibly if their experience falls between listed brackets
-- salary_aspirational: a single stretch figure (e.g. "₹130L") applying the job-change or niche-skill premium noted in the Market Context section of the benchmarks, if it plausibly applies to them
 - salary_basis: one short sentence naming exactly which row/category and seniority bracket you matched them to (e.g. "Matched to Product Management, 10-15 yrs, Technology sector"). If their CV/target is clearly outside India, say so explicitly and still give your best indicative range with that caveat
 - Return only valid JSON, no markdown`,
         },

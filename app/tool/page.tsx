@@ -681,7 +681,7 @@ function ModeSelectionStep({ onSelect }: { onSelect: (m: 'full' | 'quick') => vo
       </div>
 
       <p className="text-center text-xs text-stone-400 mt-8 font-light">
-        You can always come back and try the other path. Your CV is never stored.
+        You can always come back and try the other path.
       </p>
     </div>
   )
@@ -1096,7 +1096,6 @@ function ResultsStep({ synthesis, loading, email, setEmail, emailSubmitted, emai
                 ['Location', ts.location],
                 ['Timeline', ts.timeline],
                 ['Indicative Range', ts.salary_min && ts.salary_max ? `${ts.salary_min} – ${ts.salary_max}` : ''],
-                ['Stretch (best case)', ts.salary_aspirational],
               ] as [string, string][]).filter(([, v]) => v).map(([k, v]) => (
                 <div key={k} className="flex justify-between gap-3">
                   <dt className="text-stone-400 flex-shrink-0 font-light">{k}</dt>
