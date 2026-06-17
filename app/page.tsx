@@ -38,6 +38,12 @@ const jsonLd = {
       '@id': 'https://www.midcourse.co.in/#org',
       name: 'Midcourse',
       url: 'https://www.midcourse.co.in',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.midcourse.co.in/logo.svg',
+        width: 400,
+        height: 120,
+      },
       description: 'AI-powered career reflection and coaching for professionals navigating their next move.',
       foundingDate: '2024',
       areaServed: ['IN', 'US', 'GB', 'SG', 'AE'],

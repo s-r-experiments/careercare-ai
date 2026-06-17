@@ -42,21 +42,11 @@ export const metadata: Metadata = {
     siteName: 'Midcourse',
     title: 'Midcourse | AI Career Reflection & Coaching Tool – Free',
     description: 'Upload your CV and get a personalised AI career reflection. Discover your strengths, gaps, and the right next career move — in minutes. Free, no account required.',
-    images: [
-      {
-        url: '/og.png',
-        width: 1200,
-        height: 630,
-        alt: 'Midcourse – AI Career Reflection & Coaching Tool',
-        type: 'image/png',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Midcourse | AI Career Reflection & Coaching Tool',
     description: 'Upload your CV. Answer guided questions. Get a deep AI career reflection — strengths, gaps, next steps. Free, no account required.',
-    images: ['/og.png'],
   },
   alternates: {
     canonical: 'https://www.midcourse.co.in',
