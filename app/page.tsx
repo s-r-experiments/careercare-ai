@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Check, ChevronRight } from 'lucide-react'
 import Logo, { LogoMark } from './components/Logo'
+import HeroSlideshow from './components/HeroSlideshow'
 
 export const metadata: Metadata = {
   title: 'Midcourse | Free AI Career Reflection & Coaching Tool',
@@ -239,12 +240,7 @@ export default function Home() {
 
       {/* ── Hero ──────────────────────────────────────────────── */}
       <section className="relative min-h-[calc(100vh-64px)] flex items-center px-6 py-12 overflow-hidden bg-[#1C1917]">
-        {/* Premium gradient background — no images, no load flicker */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -bottom-32 -left-32 w-[700px] h-[700px] rounded-full bg-amber-600/[0.22] blur-[120px]" />
-          <div className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full bg-emerald-800/[0.25] blur-[100px]" />
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAyKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2cpIi8+PC9zdmc+')] opacity-60" />
-        </div>
+        <HeroSlideshow />
 
         <div className="max-w-6xl mx-auto w-full relative z-10">
           <div className="grid lg:grid-cols-2 gap-20 items-center">

@@ -3,29 +3,29 @@ import { useState, useEffect } from 'react'
 
 const SLIDES = [
   {
-    // Team in modern office — collaboration, people
-    url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80',
-    pos: 'center',
-  },
-  {
-    // Two colleagues reviewing work on laptop
-    url: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1920&q=80',
+    // Professional writing in a notebook — the act of reflection
+    url: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1920&q=80',
     pos: 'center 40%',
   },
   {
-    // Person working on laptop at a bright cafe / outdoor setup
-    url: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=1920&q=80',
+    // Woman at a window in quiet thought — a pause, a midcourse moment
+    url: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1920&q=80',
+    pos: 'center 25%',
+  },
+  {
+    // Man in a quiet, contemplative moment — where do I go next?
+    url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1920&q=80',
+    pos: 'center 20%',
+  },
+  {
+    // Professional woman — clarity, direction, readiness
+    url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=1920&q=80',
     pos: 'center 30%',
   },
   {
-    // Open plan modern office, people working
-    url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=80',
-    pos: 'center',
-  },
-  {
-    // Person with laptop, relaxed outdoor/lifestyle — work-life balance
-    url: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1920&q=80',
-    pos: 'center 50%',
+    // Someone working through ideas — the reflection process in action
+    url: 'https://images.unsplash.com/photo-1530099486328-e021101a494a?auto=format&fit=crop&w=1920&q=80',
+    pos: 'center 35%',
   },
 ]
 
@@ -33,7 +33,7 @@ export default function HeroSlideshow() {
   const [current, setCurrent] = useState(0)
 
   useEffect(() => {
-    const t = setInterval(() => setCurrent(i => (i + 1) % SLIDES.length), 6000)
+    const t = setInterval(() => setCurrent(i => (i + 1) % SLIDES.length), 7000)
     return () => clearInterval(t)
   }, [])
 
@@ -42,7 +42,7 @@ export default function HeroSlideshow() {
       {SLIDES.map((slide, i) => (
         <div
           key={i}
-          className="absolute inset-0 bg-cover transition-opacity duration-[2500ms] ease-in-out"
+          className="absolute inset-0 bg-cover transition-opacity duration-[3000ms] ease-in-out"
           style={{
             backgroundImage: `url(${slide.url})`,
             backgroundPosition: slide.pos,
@@ -50,9 +50,8 @@ export default function HeroSlideshow() {
           }}
         />
       ))}
-      {/* Warm charcoal gradient — heavy left for text legibility, opens right */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#1C1917]/95 via-[#1C1917]/80 to-[#1C1917]/50" />
-      <div className="absolute inset-0 bg-[#1C1917]/15" />
+      {/* Heavy on the left so text stays legible; opens up on the right so photos breathe */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#1C1917]/95 via-[#1C1917]/75 to-[#1C1917]/30" />
     </div>
   )
 }
