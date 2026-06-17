@@ -249,7 +249,7 @@ export default function Home() {
             <div>
               <div className="inline-flex items-center gap-2 bg-white/8 text-white/60 text-xs font-medium px-3.5 py-1.5 rounded-full mb-8 border border-white/8 tracking-wide">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400/70" />
-                AI Career Reflection · Free · 10 min
+                Reflect on your career. Navigate what&apos;s next. 15 mins
               </div>
 
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white leading-[1.06] tracking-tight mb-3">
@@ -289,7 +289,7 @@ export default function Home() {
                 </a>
               </div>
 
-              <p className="text-white/25 text-sm mt-5 font-light">Takes about 10 minutes. Completely free.</p>
+              <p className="text-white/25 text-sm mt-5 font-light">Takes about 15 minutes. Completely free.</p>
             </div>
 
             {/* Right: Sample output — editorial card */}
