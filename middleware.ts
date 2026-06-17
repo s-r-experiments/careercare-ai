@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { clerkMiddleware } from '@clerk/nextjs/server'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
+import { NextRequest, NextResponse } from 'next/server'
 
 let redis: Redis | null = null
 let limiters: Record<string, Ratelimit> | null = null
@@ -17,37 +18,31 @@ function getRedis(): Redis | null {
 function getLimiters(r: Redis): Record<string, Ratelimit> {
   if (!limiters) {
     limiters = {
-      // Groq-consuming endpoints — tight daily cap per IP
-      groq: new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(5, '1 d'), prefix: 'rl_groq' }),
-      // File upload — allow a few retries
-      file: new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(10, '1 d'), prefix: 'rl_file' }),
-      // Excel download — user may re-download
-      excel: new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(10, '1 d'), prefix: 'rl_excel' }),
-      // Feedback — per hour to prevent inbox spam
-      feedback: new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(5, '1 h'), prefix: 'rl_feedback' }),
-      // Waitlist — prevent email relay abuse
-      waitlist: new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(3, '1 d'), prefix: 'rl_waitlist' }),
+      groq:     new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(5,  '1 d'), prefix: 'rl_groq' }),
+      file:     new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(10, '1 d'), prefix: 'rl_file' }),
+      excel:    new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(10, '1 d'), prefix: 'rl_excel' }),
+      feedback: new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(5,  '1 h'), prefix: 'rl_feedback' }),
+      waitlist: new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(3,  '1 d'), prefix: 'rl_waitlist' }),
     }
   }
   return limiters
 }
 
 const ROUTE_LIMITER: Record<string, string> = {
-  '/api/parse-cv': 'file',
+  '/api/parse-cv':           'file',
   '/api/generate-questions': 'groq',
-  '/api/synthesise': 'groq',
-  '/api/generate-excel': 'excel',
-  '/api/feedback': 'feedback',
-  '/api/waitlist': 'waitlist',
+  '/api/synthesise':         'groq',
+  '/api/generate-excel':     'excel',
+  '/api/feedback':           'feedback',
+  '/api/waitlist':           'waitlist',
 }
 
-export async function middleware(req: NextRequest) {
+async function applyRateLimit(req: NextRequest): Promise<NextResponse | null> {
   const r = getRedis()
-  // If Redis isn't configured (e.g. local dev without env vars) — pass through
-  if (!r) return NextResponse.next()
+  if (!r) return null
 
   const limiterKey = ROUTE_LIMITER[req.nextUrl.pathname]
-  if (!limiterKey) return NextResponse.next()
+  if (!limiterKey) return null
 
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'anonymous'
   const { success, limit, remaining, reset } = await getLimiters(r)[limiterKey].limit(ip)
@@ -67,18 +62,18 @@ export async function middleware(req: NextRequest) {
     )
   }
 
-  const res = NextResponse.next()
-  res.headers.set('X-RateLimit-Remaining', String(remaining))
-  return res
+  return null
 }
+
+export default clerkMiddleware(async (_auth, req: NextRequest) => {
+  const limited = await applyRateLimit(req)
+  if (limited) return limited
+})
 
 export const config = {
   matcher: [
-    '/api/parse-cv',
-    '/api/generate-questions',
-    '/api/synthesise',
-    '/api/generate-excel',
-    '/api/feedback',
-    '/api/waitlist',
+    // Skip Next.js internals and static files
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/(api|trpc)(.*)',
   ],
 }
