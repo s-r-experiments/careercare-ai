@@ -233,7 +233,7 @@ export default function Home() {
       </nav>
 
       {/* ── Hero ──────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center px-6 py-24 overflow-hidden bg-[#1C1917]">
+      <section className="relative min-h-[calc(100vh-64px)] flex items-center px-6 py-12 overflow-hidden bg-[#1C1917]">
         <HeroSlideshow />
 
         <div className="max-w-6xl mx-auto w-full relative z-10">
@@ -328,7 +328,7 @@ export default function Home() {
             But most careers run on autopilot — years passing without a moment of genuine reflection.
           </blockquote>
           <div className="flex justify-center mb-8">
-            <LogoMark className="opacity-30" />
+            <LogoMark className="opacity-30" size={2} />
           </div>
           <p className="text-xl font-light text-[#1C1917] tracking-tight mb-10">
             Midcourse is that pause.
@@ -462,7 +462,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <div className="flex justify-center mb-4">
-              <LogoMark className="opacity-25" />
+              <LogoMark className="opacity-25" size={2} />
             </div>
             <p className="text-[#A8A29E] font-medium text-sm uppercase tracking-[0.2em] mb-4">The guided conversation</p>
             <h2 className="text-3xl sm:text-4xl font-light text-[#1C1917] mb-4 tracking-tight">
