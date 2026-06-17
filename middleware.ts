@@ -1,0 +1,84 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
+
+let redis: Redis | null = null
+let limiters: Record<string, Ratelimit> | null = null
+
+function getRedis(): Redis | null {
+  if (!redis) {
+    const url = process.env.UPSTASH_REDIS_REST_URL
+    const token = process.env.UPSTASH_REDIS_REST_TOKEN
+    if (url && token) redis = new Redis({ url, token })
+  }
+  return redis
+}
+
+function getLimiters(r: Redis): Record<string, Ratelimit> {
+  if (!limiters) {
+    limiters = {
+      // Groq-consuming endpoints — tight daily cap per IP
+      groq: new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(5, '1 d'), prefix: 'rl_groq' }),
+      // File upload — allow a few retries
+      file: new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(10, '1 d'), prefix: 'rl_file' }),
+      // Excel download — user may re-download
+      excel: new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(10, '1 d'), prefix: 'rl_excel' }),
+      // Feedback — per hour to prevent inbox spam
+      feedback: new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(5, '1 h'), prefix: 'rl_feedback' }),
+      // Waitlist — prevent email relay abuse
+      waitlist: new Ratelimit({ redis: r, limiter: Ratelimit.slidingWindow(3, '1 d'), prefix: 'rl_waitlist' }),
+    }
+  }
+  return limiters
+}
+
+const ROUTE_LIMITER: Record<string, string> = {
+  '/api/parse-cv': 'file',
+  '/api/generate-questions': 'groq',
+  '/api/synthesise': 'groq',
+  '/api/generate-excel': 'excel',
+  '/api/feedback': 'feedback',
+  '/api/waitlist': 'waitlist',
+}
+
+export async function middleware(req: NextRequest) {
+  const r = getRedis()
+  // If Redis isn't configured (e.g. local dev without env vars) — pass through
+  if (!r) return NextResponse.next()
+
+  const limiterKey = ROUTE_LIMITER[req.nextUrl.pathname]
+  if (!limiterKey) return NextResponse.next()
+
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'anonymous'
+  const { success, limit, remaining, reset } = await getLimiters(r)[limiterKey].limit(ip)
+
+  if (!success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again in a while.' },
+      {
+        status: 429,
+        headers: {
+          'X-RateLimit-Limit': String(limit),
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': String(reset),
+          'Retry-After': String(Math.ceil((reset - Date.now()) / 1000)),
+        },
+      }
+    )
+  }
+
+  const res = NextResponse.next()
+  res.headers.set('X-RateLimit-Remaining', String(remaining))
+  return res
+}
+
+export const config = {
+  matcher: [
+    '/api/parse-cv',
+    '/api/generate-questions',
+    '/api/synthesise',
+    '/api/generate-excel',
+    '/api/feedback',
+    '/api/waitlist',
+  ],
+}

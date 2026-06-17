@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import * as ExcelJS from 'exceljs'
+import { SERVICE_UNAVAILABLE_MESSAGE } from '../../lib/errors'
 
 const NAVY = '1F4E79'
 const WHITE = 'FFFFFF'
@@ -156,7 +157,7 @@ export async function POST(req: NextRequest) {
       },
     })
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'Unknown error'
-    return NextResponse.json({ error: msg }, { status: 500 })
+    console.error('generate-excel failed:', e)
+    return NextResponse.json({ error: SERVICE_UNAVAILABLE_MESSAGE }, { status: 500 })
   }
 }

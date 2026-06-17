@@ -6,6 +6,11 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { SERVICE_UNAVAILABLE_MESSAGE } from '../../lib/errors'
+
+function escHtml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -64,7 +69,7 @@ export async function POST(req: NextRequest) {
             <div style="font-family: -apple-system, sans-serif; max-width: 560px; color: #1C1917; line-height: 1.6;">
               <div style="background: #1C1917; padding: 20px 24px; border-radius: 12px 12px 0 0;">
                 <p style="color: rgba(255,255,255,0.5); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 4px;">Midcourse · New Feedback</p>
-                ${userName ? `<p style="color: white; font-size: 15px; margin: 0; font-weight: 500;">${userName}'s reflection</p>` : ''}
+                ${userName ? `<p style="color: white; font-size: 15px; margin: 0; font-weight: 500;">${escHtml(userName)}'s reflection</p>` : ''}
               </div>
               <div style="background: #FAF8F5; padding: 24px; border: 1px solid #E7E5E4; border-top: none; border-radius: 0 0 12px 12px;">
                 <table style="width: 100%; border-collapse: collapse;">
@@ -100,7 +105,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true, stored })
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'Unknown error'
-    return NextResponse.json({ error: msg }, { status: 500 })
+    console.error('feedback failed:', e)
+    return NextResponse.json({ error: SERVICE_UNAVAILABLE_MESSAGE }, { status: 500 })
   }
 }

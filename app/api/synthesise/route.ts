@@ -91,6 +91,19 @@ export async function POST(req: NextRequest) {
       depth?: number
     }
 
+    if (!cvText || typeof cvText !== 'string') {
+      return NextResponse.json({ error: 'CV text is required.' }, { status: 400 })
+    }
+    if (cvText.length > 30_000) {
+      return NextResponse.json({ error: 'CV text is too long.' }, { status: 413 })
+    }
+    if (!Array.isArray(questions) || !Array.isArray(answers)) {
+      return NextResponse.json({ error: 'Invalid request shape.' }, { status: 400 })
+    }
+    if (questions.length > 20 || answers.length > 20) {
+      return NextResponse.json({ error: 'Too many questions or answers.' }, { status: 400 })
+    }
+
     const isQuickMode = mode === 'quick' || questions.length === 0
 
     const qa = isQuickMode

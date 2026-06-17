@@ -9,6 +9,12 @@ function getGroq() {
 export async function POST(req: NextRequest) {
   try {
     const { cvText } = await req.json()
+    if (!cvText || typeof cvText !== 'string') {
+      return NextResponse.json({ error: 'CV text is required.' }, { status: 400 })
+    }
+    if (cvText.length > 30_000) {
+      return NextResponse.json({ error: 'CV text is too long. Please upload a shorter document.' }, { status: 413 })
+    }
     const groq = getGroq()
     const completion = await groq.chat.completions.create({
       model: 'llama-3.3-70b-versatile',

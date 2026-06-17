@@ -9,6 +9,10 @@ export async function POST(req: NextRequest) {
     const file = formData.get('file') as File
     if (!file) return NextResponse.json({ error: 'No file' }, { status: 400 })
 
+    if (file.size > 5 * 1024 * 1024) {
+      return NextResponse.json({ error: 'File too large. Please upload a CV under 5 MB.' }, { status: 413 })
+    }
+
     const buffer = Buffer.from(await file.arrayBuffer())
     const name = file.name.toLowerCase()
     let text = ''
