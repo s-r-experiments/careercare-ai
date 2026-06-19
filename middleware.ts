@@ -1,7 +1,6 @@
-import { clerkMiddleware } from '@clerk/nextjs/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
-import { NextRequest, NextResponse } from 'next/server'
 
 let redis: Redis | null = null
 let limiters: Record<string, Ratelimit> | null = null
@@ -37,12 +36,12 @@ const ROUTE_LIMITER: Record<string, string> = {
   '/api/waitlist':           'waitlist',
 }
 
-async function applyRateLimit(req: NextRequest): Promise<NextResponse | null> {
+export async function middleware(req: NextRequest) {
   const r = getRedis()
-  if (!r) return null
+  if (!r) return NextResponse.next()
 
   const limiterKey = ROUTE_LIMITER[req.nextUrl.pathname]
-  if (!limiterKey) return null
+  if (!limiterKey) return NextResponse.next()
 
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'anonymous'
   const { success, limit, remaining, reset } = await getLimiters(r)[limiterKey].limit(ip)
@@ -62,18 +61,18 @@ async function applyRateLimit(req: NextRequest): Promise<NextResponse | null> {
     )
   }
 
-  return null
+  const res = NextResponse.next()
+  res.headers.set('X-RateLimit-Remaining', String(remaining))
+  return res
 }
-
-export default clerkMiddleware(async (_auth, req: NextRequest) => {
-  const limited = await applyRateLimit(req)
-  if (limited) return limited
-})
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and static files
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-    '/(api|trpc)(.*)',
+    '/api/parse-cv',
+    '/api/generate-questions',
+    '/api/synthesise',
+    '/api/generate-excel',
+    '/api/feedback',
+    '/api/waitlist',
   ],
 }
