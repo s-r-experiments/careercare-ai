@@ -232,9 +232,9 @@ export default function Home() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* ── Nav — logo centered, sticky ─────────────────────── */}
-      <nav className="sticky top-0 z-50 bg-white px-6 py-4 border-b border-stone-100 shadow-sm">
+      <nav className="sticky top-0 z-50 bg-black px-6 py-4 border-b border-white/10">
         <div className="max-w-6xl mx-auto flex items-center justify-center">
-          <Logo />
+          <Logo light />
         </div>
       </nav>
 
