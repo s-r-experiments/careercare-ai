@@ -245,12 +245,12 @@ export default function Home() {
         <div className="max-w-6xl mx-auto w-full relative z-10">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
 
-            {/* Left: Copy */}
-            <div>
+            {/* Left: Copy — text-shadow ensures legibility across all slideshow frames */}
+            <div style={{ textShadow: '0 1px 12px rgba(0,0,0,0.95), 0 2px 4px rgba(0,0,0,0.7)' }}>
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white leading-[1.06] tracking-tight mb-3">
                 Your career has a story.
               </h1>
-              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white/40 leading-[1.06] tracking-tight mb-8">
+              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white/60 leading-[1.06] tracking-tight mb-8">
                 Let&apos;s finally read it.
               </h2>
 
@@ -259,19 +259,19 @@ export default function Home() {
                 {['Upload your CV', 'Answer 12 guided questions', 'Get your personalised report'].map((s, i) => (
                   <span key={s} className="flex items-center gap-3">
                     <span className="flex items-center gap-1.5">
-                      <span className="text-white/30 text-xs font-medium">{i + 1}</span>
-                      <span className="text-sm text-white/55 font-light">{s}</span>
+                      <span className="text-white/50 text-xs font-medium">{i + 1}</span>
+                      <span className="text-sm text-white/70 font-light">{s}</span>
                     </span>
-                    {i < 2 && <ArrowRight className="w-3 h-3 text-white/20 shrink-0" />}
+                    {i < 2 && <ArrowRight className="w-3 h-3 text-white/30 shrink-0" />}
                   </span>
                 ))}
               </div>
 
-              <p className="text-lg text-white/55 leading-relaxed mb-10 max-w-lg font-light">
+              <p className="text-lg text-white/75 leading-relaxed mb-10 max-w-lg font-light">
                 Most professionals spend years building careers without stopping to understand them. Midcourse asks the questions a great coach asks — and returns a report showing your patterns, blind spots, and clearest next chapter.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4" style={{ textShadow: 'none' }}>
                 <Link
                   href="/tool"
                   className="inline-flex items-center justify-center gap-2 bg-white hover:bg-stone-100 text-[#1C1917] text-base font-semibold px-8 py-4 rounded-xl transition-all active:scale-95"
@@ -281,13 +281,13 @@ export default function Home() {
                 </Link>
                 <a
                   href="#the-reflection"
-                  className="inline-flex items-center justify-center gap-2 text-white/50 hover:text-white/80 text-base font-light px-8 py-4 rounded-xl border border-white/10 hover:border-white/20 transition-all"
+                  className="inline-flex items-center justify-center gap-2 text-white/60 hover:text-white/90 text-base font-light px-8 py-4 rounded-xl border border-white/15 hover:border-white/30 transition-all"
                 >
                   See how it works
                 </a>
               </div>
 
-              <p className="text-white/25 text-sm mt-5 font-light">Takes about 15 minutes. Completely free.</p>
+              <p className="text-white/40 text-sm mt-5 font-light">Takes about 15 minutes. Completely free.</p>
             </div>
 
             {/* Right: Sample report output — concrete strength patterns */}
