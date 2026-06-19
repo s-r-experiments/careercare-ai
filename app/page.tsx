@@ -247,30 +247,28 @@ export default function Home() {
 
             {/* Left: Copy */}
             <div>
-              <div className="inline-flex items-center gap-2 bg-white/8 text-white/60 text-xs font-medium px-3.5 py-1.5 rounded-full mb-8 border border-white/8 tracking-wide">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400/70" />
-                Reflect on your career. Navigate what&apos;s next. 15 mins
-              </div>
-
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white leading-[1.06] tracking-tight mb-3">
-                Your next career move,
+                Your career has a story.
               </h1>
-              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white/40 leading-[1.06] tracking-tight mb-7">
-                made clear.
+              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white/40 leading-[1.06] tracking-tight mb-8">
+                Let&apos;s finally read it.
               </h2>
 
-              {/* 3-step process — immediately shows the mechanism */}
+              {/* Concrete mechanism — what actually happens */}
               <div className="flex items-center gap-3 mb-8 flex-wrap">
-                {['Reflect on your story', 'Uncover your patterns', 'Navigate what\'s next'].map((s, i) => (
+                {['Upload your CV', 'Answer 12 guided questions', 'Get your personalised report'].map((s, i) => (
                   <span key={s} className="flex items-center gap-3">
-                    <span className="text-sm text-white/50 font-light">{s}</span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="text-white/30 text-xs font-medium">{i + 1}</span>
+                      <span className="text-sm text-white/55 font-light">{s}</span>
+                    </span>
                     {i < 2 && <ArrowRight className="w-3 h-3 text-white/20 shrink-0" />}
                   </span>
                 ))}
               </div>
 
               <p className="text-lg text-white/55 leading-relaxed mb-10 max-w-lg font-light">
-                Midcourse reads your career story, asks the questions great coaches ask, and returns a personalised report — your strengths, blind spots, and clearest next steps.
+                Most professionals spend years building careers without stopping to understand them. Midcourse asks the questions a great coach asks — and returns a report showing your patterns, blind spots, and clearest next chapter.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -292,36 +290,37 @@ export default function Home() {
               <p className="text-white/25 text-sm mt-5 font-light">Takes about 15 minutes. Completely free.</p>
             </div>
 
-            {/* Right: Sample output — editorial card */}
+            {/* Right: Sample report output — concrete strength patterns */}
             <div className="hidden lg:block">
               <div className="relative">
-                <div className="absolute inset-0 bg-green-950 blur-[80px] opacity-30 rounded-3xl" />
+                <div className="absolute inset-0 bg-amber-950 blur-[80px] opacity-20 rounded-3xl" />
                 <div className="relative bg-white/[0.05] backdrop-blur border border-white/8 rounded-2xl p-8 shadow-2xl">
-                  <div className="flex items-center gap-1.5 mb-5">
-                    <div className="w-2 h-2 rounded-full bg-white/15" />
-                    <div className="w-2 h-2 rounded-full bg-white/15" />
-                    <div className="w-2 h-2 rounded-full bg-white/15" />
-                    <span className="ml-2 text-white/25 text-xs font-mono tracking-wide">career-reflection.pdf</span>
+                  <div className="flex items-center justify-between mb-6">
+                    <p className="text-white/30 text-[10px] font-semibold uppercase tracking-[0.2em]">Midcourse Report · Priya M.</p>
+                    <span className="text-white/20 text-[10px] font-light">Sample output</span>
                   </div>
 
-                  <p className="text-white/30 text-[11px] font-semibold uppercase tracking-[0.18em] mb-3">Career Narrative</p>
-                  <p className="text-white/85 text-base leading-relaxed italic mb-6 font-light">
-                    &ldquo;Priya is a product leader who has built and scaled fintech experiences across South Asia.
-                    She&apos;s naturally drawn to moments of ambiguity — where there&apos;s no playbook yet —
-                    and is ready for a role where she shapes the product arc, not just executes it.&rdquo;
-                  </p>
+                  <p className="text-white/40 text-[10px] font-semibold uppercase tracking-[0.18em] mb-4">Strength Patterns</p>
 
-                  <div className="border-t border-white/8 pt-5 space-y-3">
+                  <div className="space-y-4 mb-6">
                     {[
-                      { label: 'Personal patterns identified', value: '5 with context' },
-                      { label: 'Growth edges', value: '4 with actions' },
-                      { label: 'Possible directions', value: '3 paths explored' },
-                      { label: 'Reflection document', value: 'Ready to download' },
-                    ].map(({ label, value }) => (
-                      <div key={label} className="flex items-center justify-between">
-                        <span className="text-white/35 text-xs font-light">{label}</span>
-                        <span className="text-white/65 text-xs font-medium">{value}</span>
+                      { n: '01', title: 'Builder', desc: 'You create structure from ambiguity. Your best work comes when there\'s no playbook yet.' },
+                      { n: '02', title: 'Translator', desc: 'You bridge strategy and execution. Most energised turning direction into something real.' },
+                      { n: '03', title: 'Explorer', desc: 'You gravitate toward new domains. Each move has quietly expanded your professional range.' },
+                    ].map(({ n, title, desc }) => (
+                      <div key={n} className="flex gap-3">
+                        <span className="text-white/20 text-xs font-mono mt-0.5 shrink-0">{n}</span>
+                        <div>
+                          <p className="text-white/80 text-sm font-medium mb-0.5">{title}</p>
+                          <p className="text-white/40 text-xs leading-relaxed font-light">{desc}</p>
+                        </div>
                       </div>
+                    ))}
+                  </div>
+
+                  <div className="border-t border-white/8 pt-4 flex flex-wrap gap-x-4 gap-y-1">
+                    {['Growth edges', 'Blind spots', 'Possible directions', 'Action plan'].map(l => (
+                      <span key={l} className="text-white/25 text-[11px] font-light">+ {l}</span>
                     ))}
                   </div>
                 </div>

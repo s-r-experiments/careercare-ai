@@ -1017,6 +1017,23 @@ function ResultsStep({ synthesis, loading, email, setEmail, emailSubmitted, emai
   const ts = synthesis.target_state || {}
   const ns = synthesis.next_steps || {} as NextSteps
 
+  const [showEmailGate, setShowEmailGate] = useState(false)
+  const [gateEmail, setGateEmail] = useState('')
+  const [gateEmailError, setGateEmailError] = useState('')
+
+  const handleDownloadClick = () => {
+    if (email) { onDownload(); return }
+    setShowEmailGate(true)
+  }
+
+  const handleGateSubmit = () => {
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(gateEmail)
+    if (!valid) { setGateEmailError('Please enter a valid email address.'); return }
+    setEmail(gateEmail)
+    setShowEmailGate(false)
+    onDownload()
+  }
+
   return (
     <div>
       {/* Greeting */}
@@ -1416,11 +1433,36 @@ function ResultsStep({ synthesis, loading, email, setEmail, emailSubmitted, emai
             <span>Career narrative</span><span>·</span><span>Personal patterns</span>
             <span>·</span><span>Growth edges</span><span>·</span><span>Possible directions</span>
           </div>
-          <button onClick={onDownload} disabled={loading}
-            className="bg-white text-[#1C1917] font-semibold px-10 py-4 rounded-xl hover:bg-stone-100 active:scale-95 transition-all disabled:opacity-60 flex items-center gap-2 mx-auto text-base">
-            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
-            Download My Reflection (.xlsx)
-          </button>
+
+          {showEmailGate ? (
+            <div className="max-w-sm mx-auto">
+              <p className="text-white/60 text-sm mb-3 font-light">Enter your email to download</p>
+              <input
+                type="email"
+                value={gateEmail}
+                onChange={e => { setGateEmail(e.target.value); setGateEmailError('') }}
+                onKeyDown={e => e.key === 'Enter' && handleGateSubmit()}
+                placeholder="your@email.com"
+                autoFocus
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white text-sm placeholder-white/30 focus:outline-none focus:border-white/40 mb-2 font-light"
+              />
+              {gateEmailError && <p className="text-red-400 text-xs mb-2">{gateEmailError}</p>}
+              <button
+                onClick={handleGateSubmit}
+                disabled={loading}
+                className="w-full bg-white text-[#1C1917] font-semibold px-10 py-3 rounded-xl hover:bg-stone-100 active:scale-95 transition-all disabled:opacity-60 flex items-center justify-center gap-2 text-base"
+              >
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
+                Download My Reflection (.xlsx)
+              </button>
+            </div>
+          ) : (
+            <button onClick={handleDownloadClick} disabled={loading}
+              className="bg-white text-[#1C1917] font-semibold px-10 py-4 rounded-xl hover:bg-stone-100 active:scale-95 transition-all disabled:opacity-60 flex items-center gap-2 mx-auto text-base">
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
+              Download My Reflection (.xlsx)
+            </button>
+          )}
         </div>
       </FadeIn>
 

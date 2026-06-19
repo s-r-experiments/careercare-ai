@@ -50,8 +50,10 @@ export default function HeroSlideshow() {
           }}
         />
       ))}
-      {/* Heavy on the left so text stays legible; opens up on the right so photos breathe */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#1C1917]/95 via-[#1C1917]/75 to-[#1C1917]/30" />
+      {/* Left-to-right: heavy left for text legibility on desktop */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#1C1917]/98 via-[#1C1917]/93 to-[#1C1917]/80" />
+      {/* Top-to-bottom: extra coverage in the middle/bottom for mobile */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1C1917]/55 to-[#1C1917]/75" />
     </div>
   )
 }
