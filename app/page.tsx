@@ -232,9 +232,9 @@ export default function Home() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* ── Nav — logo centered, sticky ─────────────────────── */}
-      <nav className="sticky top-0 z-50 bg-black px-6 py-4 border-b border-white/10">
+      <nav className="sticky top-0 z-50 bg-white px-6 py-4 border-b border-stone-100 shadow-sm">
         <div className="max-w-6xl mx-auto flex items-center justify-center">
-          <Logo light />
+          <Logo />
         </div>
       </nav>
 
@@ -640,7 +640,7 @@ export default function Home() {
                     <span key={i} className="text-[10px] bg-[#FAF8F5] text-[#78716C] px-2.5 py-1 rounded-full border border-[#E7E5E4]">{p}</span>
                   ))}
                 </div>
-                <p className="text-xs text-[#A8A29E] font-light mt-2">16 specific, dated actions — built around your timeline.</p>
+                <p className="text-xs text-[#A8A29E] font-light mt-2">12 specific, dated actions — built around your timeline.</p>
               </div>
             </div>
 

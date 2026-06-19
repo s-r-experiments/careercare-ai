@@ -382,9 +382,9 @@ export default function ToolPage() {
   if (mode === null) {
     return (
       <div className="min-h-screen bg-[#FAF8F5]">
-        <nav className="bg-black border-b border-white/10 px-6 py-4">
+        <nav className="bg-white border-b border-stone-100 px-6 py-4">
           <div className="max-w-3xl mx-auto flex justify-center">
-            <Link href="/"><Logo light /></Link>
+            <Link href="/"><Logo /></Link>
           </div>
         </nav>
         <ModeSelectionStep onSelect={setMode} />
@@ -395,18 +395,18 @@ export default function ToolPage() {
   return (
     <div className={`min-h-screen transition-colors duration-700 ${stageBg}`}>
       {/* Nav */}
-      <nav className="bg-black border-b border-white/10 px-6 py-4">
+      <nav className="bg-white border-b border-stone-100 px-6 py-4">
         <div className="max-w-3xl mx-auto relative flex items-center justify-center">
-          <Link href="/"><Logo light /></Link>
+          <Link href="/"><Logo /></Link>
           {step === 4 && synthesis && (
-            <span className="absolute right-0 text-sm text-white/40 font-light">
+            <span className="absolute right-0 text-sm text-stone-400 font-light">
               {synthesis.name.split(' ')[0]}
             </span>
           )}
           {step === 1 && (
             <button
               onClick={() => setMode(null)}
-              className="absolute right-0 text-xs text-white/40 hover:text-white/70 transition-colors font-light"
+              className="absolute right-0 text-xs text-stone-400 hover:text-stone-600 transition-colors font-light"
             >
               ← Change mode
             </button>

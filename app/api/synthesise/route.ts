@@ -6,11 +6,9 @@ function getGroq() {
   return new Groq({ apiKey: process.env.GROQ_API_KEY || '' })
 }
 
-// Michael Page India Salary Guide 2026 — used to ground the indicative salary range insight
-const SALARY_BENCHMARKS = `
-=== INDIA SALARY BENCHMARKS 2026 (Michael Page, base CTC ₹L/year, excl. bonuses/ESOPs) ===
-
-TECHNOLOGY – Software / Product / Fintech companies:
+// Michael Page India Salary Guide 2026 — sectioned so we can inject only what's relevant
+const SALARY_SECTIONS: Record<string, string> = {
+  TECHNOLOGY: `TECHNOLOGY – Software / Product / Fintech companies:
   Software Development:    4-10yr→30-60L  | 10-15yr→50-100L | 15-20yr→80-150L  | 20yr+→150-200L
   Product Management:      4-10yr→35-70L  | 10-15yr→70-140L | 15-20yr→140-200L | 20yr+→180-250L
   Data Engineering:        3-6yr→30-45L   | 6-10yr→45-70L   | 10-15yr→70-100L  | 15yr+→100-150L
@@ -20,65 +18,101 @@ TECHNOLOGY – Software / Product / Fintech companies:
   Cybersecurity:           4-10yr→35-55L  | 10-15yr→55-70L  | 15-20yr→65-90L   | 20yr+→85-120L
   CTO / Head of Eng:       4-10yr→50-90L  | 10-15yr→70-150L | 15-20yr→120-200L | 20yr+→170-350L
   QA / Testing:            4-10yr→25-45L  | 10-15yr→45-70L  | 15-20yr→75-110L  | 20yr+→110-150L
-
 TECHNOLOGY – GCCs (Mid/Large Captive Centres):
   App Development:         5-10yr→40-65L  | 10-15yr→50-85L  | 15-20yr→75-100L  | 20yr+→90-130L
   Data Eng/Architecture:   5-10yr→30-55L  | 10-15yr→45-65L  | 15-20yr→55-80L   | 20yr+→75-100L
   AI/ML:                   6-10yr→60-90L  | 10-15yr→90-150L | 15yr+→150-250L
-  Head of GCC:             10-15yr→80-150L | 15-20yr→150-250L | 20yr+→300-500L
+  Head of GCC:             10-15yr→80-150L | 15-20yr→150-250L | 20yr+→300-500L`,
 
-BANKING & FINANCIAL SERVICES:
+  BANKING: `BANKING & FINANCIAL SERVICES:
   Investment Banking (MNC):    AVP→55-90L  | VP→100-150L | Dir→160-220L | MD→250-400L
   Private Equity (Global):     Assoc→60-120L | VP→130-200L | Dir→185-400L | MD→400-600L
   Corporate Banking (MNC, Sales): AVP→18-28L | VP→30-80L | Dir→70-110L | MD→100-180L
   Risk Management (MNC):       AVP→25-35L  | VP→35-55L   | Dir→55-70L   | MD→100-150L
-  CFO (Large Co):              100-200L | CFO (Very Large Co): 150-300L
-  Fintech/NBFC (Risk/Compliance): AVP→16-26L | VP→35-60L | Dir→60-100L | MD→100-180L
+  CFO (Large Co): 100-200L | CFO (Very Large Co): 150-300L
+  Fintech/NBFC (Risk/Compliance): AVP→16-26L | VP→35-60L | Dir→60-100L | MD→100-180L`,
 
-FINANCE & ACCOUNTING:
+  FINANCE: `FINANCE & ACCOUNTING:
   Financial Controller:    AVP→35-45L | VP→45-65L  | Dir→70-100L
   FP&A / Business Finance: AVP→20-35L | VP→35-50L  | Dir→55-70L
   Treasury / Fund Raising: AVP→35-45L | VP→45-65L  | Dir→75-100L
-  Internal Audit (MNC):    AVP→22-32L | VP→32-60L  | Dir→50-100L | MD→100-180L
+  Internal Audit (MNC):    AVP→22-32L | VP→32-60L  | Dir→50-100L | MD→100-180L`,
 
-SALES & MARKETING:
+  SALES: `SALES & MARKETING:
   Sales/Channel (Top B-School): 3-5yr→22-38L  | 5-10yr→30-70L | 10-15yr→60-110L | 15-22yr→80-180L
   Sales/Channel (General):      3-5yr→12-26L  | 5-10yr→24-55L | 10-15yr→40-90L  | 15-22yr→70-140L
   Brand / Category Management:  3-5yr→19-28L  | 5-10yr→24-65L | 10-15yr→45-110L
   Digital Marketing:            3-5yr→16-24L  | 5-10yr→30-60L | 10-15yr→50-110L | 15yr+→60-100L
-  D2C E-commerce:               3-5yr→12-30L  | 5-10yr→30-70L | 10-15yr→60-120L | 15yr+→80-180L
+  D2C E-commerce:               3-5yr→12-30L  | 5-10yr→30-70L | 10-15yr→60-120L | 15yr+→80-180L`,
 
-HUMAN RESOURCES:
+  HR: `HUMAN RESOURCES:
   HR Business Partner / Generalist: 3-5yr→12-20L | 5-10yr→20-40L | 10-15yr→35-65L | 15yr+→60-120L
   Talent Acquisition:              3-5yr→8-15L  | 5-10yr→15-30L | 10-15yr→25-50L
   HRBP (MNC, Senior):              5-10yr→25-45L | 10-15yr→40-70L | 15yr+→70-150L
-  CHRO (Large Org):                150-300L+
+  CHRO (Large Org): 150-300L+`,
 
-PROCUREMENT & SUPPLY CHAIN:
+  SUPPLY_CHAIN: `PROCUREMENT & SUPPLY CHAIN:
   Supply Chain (FMCG/Top B-School): 3-5yr→25-40L | 5-10yr→40-70L | 10-15yr→70-100L | 15yr+→90-140L
   Strategic Sourcing (Top B-School): 3-5yr→20-45L | 5-10yr→50-85L | 10-15yr→90-130L | 15yr+→125-250L
-  Logistics / Warehousing:           3-5yr→25-40L | 5-10yr→40-70L | 10-15yr→70-100L | 15yr+→90-140L
+  Logistics / Warehousing:           3-5yr→25-40L | 5-10yr→40-70L | 10-15yr→70-100L | 15yr+→90-140L`,
 
-LEGAL (In-house):
+  LEGAL: `LEGAL (In-house):
   General Counsel (Large Co): 150-250L | Very Large Co: 250L+
-  In-house Lawyer:            5-10yr→20-60L | 10-15yr→40-100L | 15yr+→75L+
+  In-house Lawyer: 5-10yr→20-60L | 10-15yr→40-100L | 15yr+→75L+`,
 
-ENGINEERING & MANUFACTURING:
-  CTO (Manufacturing):   Sr→80-130L | Exec→170-250L
-  Head of Engineering:   10-15yr→35-80L | 15-20yr→60-120L | 20yr+→100-180L
-  R&D / Technical Lead:  5-10yr→15-35L  | 10-15yr→25-55L  | 15yr+→50-100L
+  ENGINEERING: `ENGINEERING & MANUFACTURING:
+  CTO (Manufacturing): Sr→80-130L | Exec→170-250L
+  Head of Engineering: 10-15yr→35-80L | 15-20yr→60-120L | 20yr+→100-180L
+  R&D / Technical Lead: 5-10yr→15-35L | 10-15yr→25-55L | 15yr+→50-100L`,
 
-HEALTHCARE & LIFE SCIENCES:
+  HEALTHCARE: `HEALTHCARE & LIFE SCIENCES:
   Medical Affairs:       3-5yr→8-18L | 5-10yr→12-40L | 10-15yr→30-60L | 15yr+→50-120L
-  Sales (Pharma, pedigree): 3-5yr→12-25L | 5-10yr→18-40L | 10-15yr→35-60L | 15yr+→50-150L
+  Sales (Pharma, pedigree): 3-5yr→12-25L | 5-10yr→18-40L | 10-15yr→35-60L | 15yr+→50-150L`,
+}
 
-MARKET CONTEXT 2026:
+const MARKET_CONTEXT = `MARKET CONTEXT 2026:
   - General annual increment: 8-12% across most industries
   - Job change premium: 15-25% typical increase
   - Niche/AI skills premium: up to 30% when switching
   - GCC sector growth remains the strongest talent magnet
-  - Private equity and fintech driving highest comp at senior levels
-`
+  - Private equity and fintech driving highest comp at senior levels`
+
+// Pick the 1-2 most relevant salary sections based on keywords in the CV text.
+// Falls back to the full table only when no section matches.
+function selectSalaryBenchmarks(cvText: string): string {
+  const cv = cvText.toLowerCase()
+  const matched: string[] = []
+
+  const check = (key: string, terms: string[]) => {
+    if (terms.some(t => cv.includes(t))) matched.push(SALARY_SECTIONS[key])
+  }
+
+  check('TECHNOLOGY', ['software', 'developer', 'engineer', 'product manager', 'product management',
+    'data engineer', 'data scientist', 'machine learning', 'ai ', 'ml ', 'devops', 'sre ', 'sre,',
+    'qa ', 'quality assurance', 'tech lead', 'cto', 'head of engineering', 'gcc', 'captive'])
+  check('BANKING', ['investment banking', 'private equity', 'avp', 'managing director', 'corporate banking',
+    'risk management', 'nbfc', 'fintech', 'venture capital', 'asset management'])
+  check('FINANCE', ['cfo', 'financial controller', 'fp&a', 'treasury', 'internal audit',
+    'finance manager', 'financial planning'])
+  check('SALES', ['sales', 'marketing', 'brand manager', 'category manager', 'digital marketing',
+    'e-commerce', 'd2c', 'growth'])
+  check('HR', ['human resources', 'hr business partner', 'hrbp', 'talent acquisition', 'people operations',
+    'chro', 'people & culture'])
+  check('SUPPLY_CHAIN', ['supply chain', 'procurement', 'sourcing', 'logistics', 'warehousing',
+    'operations manager', 'fmcg'])
+  check('LEGAL', ['legal counsel', 'general counsel', 'in-house', 'lawyer', 'advocate', 'llb', 'llm'])
+  check('ENGINEERING', ['manufacturing', 'r&d', 'research and development', 'plant manager',
+    'production', 'quality control'])
+  check('HEALTHCARE', ['medical', 'pharma', 'healthcare', 'clinical', 'life sciences', 'hospital'])
+
+  const header = `=== INDIA SALARY BENCHMARKS 2026 (Michael Page, base CTC ₹L/year, excl. bonuses/ESOPs) ===\n\n`
+  if (matched.length === 0) {
+    // No match — include everything
+    return header + Object.values(SALARY_SECTIONS).join('\n\n') + '\n\n' + MARKET_CONTEXT
+  }
+  // Cap at 2 sections to avoid ballooning when someone spans industries
+  return header + matched.slice(0, 2).join('\n\n') + '\n\n' + MARKET_CONTEXT
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -143,7 +177,7 @@ FIVE RULES THAT CANNOT BE BROKEN:
 5. USE THEIR OWN LANGUAGE. The positioning statement must sound like THEM, not a LinkedIn headline generator. Pull their actual phrases and cadence. If they speak plainly, the statement should be plain. If they used a striking metaphor, use it.
 
 To estimate an indicative salary range for their next move, ground it in this real benchmark data — do not invent figures that ignore it:
-${SALARY_BENCHMARKS}
+${selectSalaryBenchmarks(cvText)}
 
 Produce a JSON object matching this exact shape:
 {
@@ -202,7 +236,7 @@ Rules:
 - energy_map.ideal_environment: 3 concrete sentences — culture, pace, team structure — based on their actual answers
 - top_strengths: exactly 5 items. "cited_from" = "When you said '...' / Your answer about X / Your CV shows Y years of..." — must be specific
 - key_gaps: exactly 4 items. "surfaced_by" = what in the interview or CV revealed this gap — be specific
-- action_plan: exactly 16 items (4 per phase). Phases: "Days 1–15 (Foundation)" | "Days 16–30 (Network + Prep)" | "Days 31–45 (Active Search)" | "Days 46–90 (Offers)"
+- action_plan: exactly 12 items (3 per phase). Phases: "Days 1–15 (Foundation)" | "Days 16–30 (Network + Prep)" | "Days 31–45 (Active Search)" | "Days 46–90 (Offers)"
 - company_categories: exactly 4 concrete types derived from their energy map and targets
 - priority_skills: exactly 3 skills, each connected to something they said or a gap you identified
 - salary_min / salary_max: an indicative annual CTC range (e.g. "₹70L" and "₹110L") for their realistic next move, chosen by matching their role/domain/seniority/years of experience against the INDIA SALARY BENCHMARKS table above. Interpolate sensibly if their experience falls between listed brackets

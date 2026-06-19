@@ -138,9 +138,13 @@ export async function POST(req: NextRequest) {
     headerStyle(ah)
     const phaseColors: Record<string, string> = {
       'Days 1-15 (Foundation)': 'FFE3F2FD',
+      'Days 1–15 (Foundation)': 'FFE3F2FD',
       'Days 16-30 (Network + Prep)': 'FFE8EAF6',
+      'Days 16–30 (Network + Prep)': 'FFE8EAF6',
       'Days 31-45 (Active Search)': 'FFF3E5F5',
+      'Days 31–45 (Active Search)': 'FFF3E5F5',
       'Days 46-90 (Offers)': 'FFE8F5E9',
+      'Days 46–90 (Offers)': 'FFE8F5E9',
     }
     ;(synthesis.action_plan || []).forEach((item: ActionItem, i: number) => {
       const r = s4.addRow([item.phase, item.action, item.category, item.priority, item.target_date, ''])
