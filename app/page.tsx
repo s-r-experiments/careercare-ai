@@ -261,7 +261,7 @@ export default function Home() {
 
               {/* 3-step process — immediately shows the mechanism */}
               <div className="flex items-center gap-3 mb-8 flex-wrap">
-                {['Upload your CV', 'Answer 12 questions', 'Get your analysis'].map((s, i) => (
+                {['Reflect on your story', 'Uncover your patterns', 'Navigate what\'s next'].map((s, i) => (
                   <span key={s} className="flex items-center gap-3">
                     <span className="text-sm text-white/50 font-light">{s}</span>
                     {i < 2 && <ArrowRight className="w-3 h-3 text-white/20 shrink-0" />}
@@ -569,24 +569,102 @@ export default function Home() {
       <section className="py-14 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
-            <p className="text-[#A8A29E] font-medium text-sm uppercase tracking-[0.2em] mb-3">What you walk away with</p>
+            <p className="text-[#A8A29E] font-medium text-sm uppercase tracking-[0.2em] mb-3">Your report</p>
             <h2 className="text-3xl sm:text-4xl font-light text-[#1C1917] tracking-tight">
-              Not a list. A reflection.
+              Here&apos;s what you&apos;ll receive
             </h2>
             <p className="text-[#78716C] mt-3 max-w-lg mx-auto font-light text-base">
-              Everything below is free. No credit card. No account.
+              A personalised reflection document built entirely from your story. Free, no account required.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-12">
-            {FREE_FEATURES.map((feat, i) => (
-              <div key={i} className="bg-[#FAF8F5] rounded-xl p-5 border border-[#E7E5E4] flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-[#1C1917] flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Check className="w-3 h-3 text-white" strokeWidth={2.5} />
+          {/* Sample report preview */}
+          <div className="grid lg:grid-cols-5 gap-8 mb-12 items-start">
+
+            {/* Left: Mock report card */}
+            <div className="lg:col-span-3 bg-white border border-[#E7E5E4] rounded-2xl overflow-hidden shadow-sm">
+              {/* Report header */}
+              <div className="bg-[#1C1917] px-6 py-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-9 h-9 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-amber-400 text-xs font-semibold">AM</span>
+                  </div>
+                  <div>
+                    <p className="text-white text-sm font-medium">Arjun M. · Senior Data Engineer</p>
+                    <p className="text-white/35 text-xs font-light">Midcourse Career Reflection · Sample</p>
+                  </div>
                 </div>
-                <p className="text-sm text-[#44403C] leading-relaxed font-light">{feat}</p>
+                <p className="text-white/65 text-sm font-light italic leading-relaxed border-l-2 border-amber-500/40 pl-3">
+                  &ldquo;A builder who finds clarity in complexity — most alive when a system I&apos;ve designed starts solving a problem I care about.&rdquo;
+                </p>
               </div>
-            ))}
+
+              {/* Signal Moments */}
+              <div className="px-6 py-4 border-b border-[#F0EDEA]">
+                <p className="text-[10px] font-semibold text-amber-600 uppercase tracking-widest mb-3">Signal Moments</p>
+                <div className="bg-[#FAF8F5] rounded-xl px-4 py-3 border border-[#E7E5E4]">
+                  <p className="text-xs text-[#78716C] italic mb-1.5 font-light">&ldquo;I spent three weeks prototyping before I even told my manager&rdquo;</p>
+                  <p className="text-xs text-[#57534E] font-light leading-relaxed">This is how you do your best work — deep, quiet, self-directed. A leadership role that demands constant visibility will slowly erode you.</p>
+                </div>
+              </div>
+
+              {/* Energy Map */}
+              <div className="px-6 py-4 border-b border-[#F0EDEA]">
+                <p className="text-[10px] font-semibold text-amber-600 uppercase tracking-widest mb-3">Career Energy Map</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-[10px] text-[#A8A29E] font-medium uppercase tracking-wider mb-2">Energises</p>
+                    {['Building real-time systems', 'Seeing direct user impact', 'Mentoring junior engineers'].map((e, i) => (
+                      <div key={i} className="flex items-start gap-1.5 mb-1.5">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1 flex-shrink-0" />
+                        <p className="text-xs text-[#57534E] font-light">{e}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-[#A8A29E] font-medium uppercase tracking-wider mb-2">Drains</p>
+                    {['Unclear project ownership', 'Work with no visible impact', 'Meetings without outcomes'].map((d, i) => (
+                      <div key={i} className="flex items-start gap-1.5 mb-1.5">
+                        <div className="w-1.5 h-1.5 rounded-full bg-red-300 mt-1 flex-shrink-0" />
+                        <p className="text-xs text-[#57534E] font-light">{d}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Plan */}
+              <div className="px-6 py-4">
+                <p className="text-[10px] font-semibold text-amber-600 uppercase tracking-widest mb-3">90-Day Action Plan</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {['Days 1–15: Foundation', 'Days 16–30: Network + Prep', 'Days 31–45: Active Search', 'Days 46–90: Offers'].map((p, i) => (
+                    <span key={i} className="text-[10px] bg-[#FAF8F5] text-[#78716C] px-2.5 py-1 rounded-full border border-[#E7E5E4]">{p}</span>
+                  ))}
+                </div>
+                <p className="text-xs text-[#A8A29E] font-light mt-2">16 specific, dated actions — built around your timeline.</p>
+              </div>
+            </div>
+
+            {/* Right: What's included checklist */}
+            <div className="lg:col-span-2 space-y-3 pt-2">
+              <p className="text-xs font-semibold text-[#A8A29E] uppercase tracking-[0.15em] mb-4">Your report includes</p>
+              {FREE_FEATURES.map((feat, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-[#1C1917] flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="w-3 h-3 text-white" strokeWidth={2.5} />
+                  </div>
+                  <p className="text-sm text-[#44403C] leading-relaxed font-light">{feat}</p>
+                </div>
+              ))}
+              <div className="pt-4">
+                <Link
+                  href="/tool"
+                  className="inline-flex items-center gap-2 bg-[#1C1917] hover:bg-stone-800 text-white text-sm font-semibold px-6 py-3 rounded-xl transition-colors"
+                >
+                  Get your report <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
           </div>
 
           {/* Paid tier teaser */}
@@ -613,6 +691,63 @@ export default function Home() {
               <Link href="/tool" className="block text-center bg-white hover:bg-stone-100 text-[#1C1917] font-semibold text-sm px-6 py-3 rounded-xl transition-colors">
                 Start free — deepen when ready →
               </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Who It's For ───────────────────────────────────── */}
+      <section className="py-14 px-6 bg-[#FAF8F5]">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <p className="text-[#A8A29E] font-medium text-sm uppercase tracking-[0.2em] mb-3">Built for</p>
+            <h2 className="text-3xl sm:text-4xl font-light text-[#1C1917] tracking-tight">
+              Professionals at an inflection point
+            </h2>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {[
+              { role: 'Consultants', hook: 'Stepping off the project treadmill — and wondering what you actually want to build next.' },
+              { role: 'Product Managers', hook: 'Between roles, or sensing your next move should feel different. Not just a bigger title.' },
+              { role: 'Founders & Operators', hook: 'Post-exit or at an inflection point. Unclear what chapter comes after this one.' },
+              { role: 'Data & AI Professionals', hook: 'Strong technically. Less certain where your career story is pointing — and why.' },
+              { role: 'Mid-career Leaders', hook: 'Successful on paper. Something still feels misaligned. You want to name what it is.' },
+              { role: 'Career Pivoters', hook: 'You know what you\'re moving away from. Less sure what you\'re moving toward.' },
+            ].map(({ role, hook }, i) => (
+              <div key={i} className="bg-white border border-[#E7E5E4] rounded-xl p-5">
+                <p className="font-semibold text-[#1C1917] text-sm mb-2">{role}</p>
+                <p className="text-[#78716C] text-sm font-light leading-relaxed">{hook}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Credibility ─────────────────────────────────────── */}
+      <section className="py-14 px-6 bg-[#1C1917]">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-white/30 font-medium text-sm uppercase tracking-[0.2em] mb-6">Why Midcourse</p>
+          <h2 className="text-3xl sm:text-4xl font-light text-white leading-snug mb-5 tracking-tight">
+            The questions a great coach asks<br className="hidden sm:block" /> after six sessions.
+          </h2>
+          <p className="text-white/45 text-lg font-light leading-relaxed max-w-xl mx-auto mb-8">
+            Executive coaching costs ₹25,000 or more per hour. Most professionals never get access to it.
+            Midcourse distils the same reflective process into 15 minutes — free, for every professional.
+          </p>
+          <div className="flex items-center justify-center gap-8 pt-4 border-t border-white/10">
+            <div className="text-center">
+              <p className="text-2xl font-semibold text-white mb-1">12</p>
+              <p className="text-white/35 text-xs font-light uppercase tracking-wider">Personalised questions</p>
+            </div>
+            <div className="w-px h-8 bg-white/10" />
+            <div className="text-center">
+              <p className="text-2xl font-semibold text-white mb-1">15 min</p>
+              <p className="text-white/35 text-xs font-light uppercase tracking-wider">Average reflection time</p>
+            </div>
+            <div className="w-px h-8 bg-white/10" />
+            <div className="text-center">
+              <p className="text-2xl font-semibold text-white mb-1">Free</p>
+              <p className="text-white/35 text-xs font-light uppercase tracking-wider">No account needed</p>
             </div>
           </div>
         </div>
