@@ -51,8 +51,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ text, recordId })
   } catch (e: unknown) {
-    const msg = e instanceof Error ? `${e.message}\n${e.stack}` : String(e)
-    console.error('parse-cv failed:', msg)
-    return NextResponse.json({ error: SERVICE_UNAVAILABLE_MESSAGE, _debug: msg }, { status: 500 })
+    console.error('parse-cv failed:', e)
+    return NextResponse.json({ error: SERVICE_UNAVAILABLE_MESSAGE }, { status: 500 })
   }
 }
