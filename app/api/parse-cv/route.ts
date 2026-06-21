@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
 import { SERVICE_UNAVAILABLE_MESSAGE } from '../../lib/errors'
@@ -22,9 +21,11 @@ export async function POST(req: NextRequest) {
       const result = await (mammoth.default || mammoth).extractRawText({ buffer })
       text = result.value
     } else if (name.endsWith('.pdf')) {
-      const pdfParse = require('pdf-parse') as (buf: Buffer) => Promise<{ text: string }>
-      const result = await pdfParse(buffer)
+      const { PDFParse } = await import('pdf-parse')
+      const parser = new PDFParse({ data: new Uint8Array(buffer) })
+      const result = await parser.getText()
       text = result.text
+      await parser.destroy()
     } else {
       return NextResponse.json({ error: 'Unsupported file type' }, { status: 400 })
     }
