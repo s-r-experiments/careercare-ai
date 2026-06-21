@@ -44,26 +44,32 @@ export async function middleware(req: NextRequest) {
   if (!limiterKey) return NextResponse.next()
 
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'anonymous'
-  const { success, limit, remaining, reset } = await getLimiters(r)[limiterKey].limit(ip)
 
-  if (!success) {
-    return NextResponse.json(
-      { error: 'Too many requests. Please try again in a while.' },
-      {
-        status: 429,
-        headers: {
-          'X-RateLimit-Limit': String(limit),
-          'X-RateLimit-Remaining': '0',
-          'X-RateLimit-Reset': String(reset),
-          'Retry-After': String(Math.ceil((reset - Date.now()) / 1000)),
-        },
-      }
-    )
+  try {
+    const { success, limit, remaining, reset } = await getLimiters(r)[limiterKey].limit(ip)
+
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again in a while.' },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': String(limit),
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': String(reset),
+            'Retry-After': String(Math.ceil((reset - Date.now()) / 1000)),
+          },
+        }
+      )
+    }
+
+    const res = NextResponse.next()
+    res.headers.set('X-RateLimit-Remaining', String(remaining))
+    return res
+  } catch {
+    // Redis unavailable — fail open so users are never blocked by infra issues
+    return NextResponse.next()
   }
-
-  const res = NextResponse.next()
-  res.headers.set('X-RateLimit-Remaining', String(remaining))
-  return res
 }
 
 export const config = {
