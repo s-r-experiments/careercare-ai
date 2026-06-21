@@ -21,11 +21,11 @@ export async function POST(req: NextRequest) {
       const result = await (mammoth.default || mammoth).extractRawText({ buffer })
       text = result.value
     } else if (name.endsWith('.pdf')) {
-      const { PDFParse } = await import('pdf-parse')
-      const parser = new PDFParse({ data: new Uint8Array(buffer) })
-      const result = await parser.getText()
+      // Use internal path to skip pdf-parse's test-file loader (which fails in serverless)
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const pdfParse = require('pdf-parse/lib/pdf-parse.js') as (buf: Buffer) => Promise<{ text: string }>
+      const result = await pdfParse(buffer)
       text = result.text
-      await parser.destroy()
     } else {
       return NextResponse.json({ error: 'Unsupported file type' }, { status: 400 })
     }
